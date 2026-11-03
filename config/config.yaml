@@ -1,0 +1,82 @@
+cycle: 2026
+as_of: null
+baseline:
+  year: 2024
+  office: president
+swing:
+  weights: {national: 2, state_poll: 1}
+  market:
+    enabled: true
+    mu: 0.10
+    weight_cap: 0.20
+    scale_by_volume: true
+    v_ref_usd: 50000
+    sigma_pts: 5.0
+    prob_clip: [0.02, 0.98]
+    max_abs_margin: 25
+    max_spread: 0.08
+    min_volume_usd: 5000
+    max_age_hours: 48
+    platforms: [kalshi, polymarket]
+  scale_by_poll_volume: false
+  n_ref: 6.0
+  national: {generic_ballot_source: own_average}
+  state: {min_polls: 1, min_n_eff: 0.8}
+polls:
+  half_life_days: {senate: 14, generic: 10}
+  max_age_days: {senate: 60, generic: 45}
+  n_cap: 2000
+  n_min: 300
+  n_ref: 600
+  n_weight_max: 1.5
+  unrated_rating: 1.0
+  population_weight: {LV: 1.0, RV: 0.9, A: 0.75}
+  partisan_weight: 0.6
+  multiway_weight: 0.8
+  pollster_cap: 0.25
+  pollster_cap_few: 0.5
+  tracker_gap_days: 7
+  sigma_poll: 3.9
+  sigma_floor: 1.0
+  house_effect: {enabled: true, shrink_k: 3, max_abs: 4.0, min_polls: 3}
+  lv_rv: {adjust: true, prior_delta: 0.0, min_pairs: 8}
+rcv: {transfer_to_dside: 0.50}
+crosstab:
+  min_n: 75
+  deff: 1.5
+  sampler: {chains: 4, tune: 1000, draws: 1000, target_accept: 0.9}
+ei:
+  groups: [wnh_college, wnh_noncollege, black, hispanic, asian, other]
+  sampler: {chains: 4, tune: 1000, draws: 1000, target_accept: 0.92, seed: 20260}
+  rhat_max: 1.01
+  ess_min: 400
+  retry_target_accept: 0.97
+  min_counties_for_state_run: 25
+  pattern_persistence: 0.5
+  workers: 8
+  relative_turnout: {wnh_college: 1.00, wnh_noncollege: 0.88, black: 0.86, hispanic: 0.72, asian: 0.75, other: 0.75}
+earlyvote:
+  cap_pts: 1.5
+  cycle_weights: {2022: 0.40, 2018: 0.30, 2024: 0.30}
+  party_cycles: [2022, 2024]
+  party_cycle_weights: {2022: 0.6, 2024: 0.4}
+  shrink: 0.5
+  county_blend_kappa: 0.25
+turnout:
+  dropoff: {wnh_college: 0.85, wnh_noncollege: 0.74, black: 0.66, hispanic: 0.56, asian: 0.62, other: 0.60}
+  environment_beta: 0.0005
+  rho_weights: {r22_20: 0.7, r18_16: 0.3}
+sim:
+  n_draws: 20000
+  seed: 20261103
+  t_df: 6
+  sd: {national: 2.5, region: 2.0, group: 1.5, state: 3.0, state_unpolled_extra: 2.0, county: 2.5}
+  rho: {region_neighbor: 0.3, state_similarity: 0.2}
+  control_threshold: 51
+  interval: [0.10, 0.90]
+geo: {town_layer: false}
+http: {min_interval_s: 2.0, retries: 4, user_agent: "SenateCountyProjection/1.0 (+about-page-url; research project)"}
+validation: {ei_flag_pts: 8, ei_fail_pts: 12}
+diff: {alert_margin_pts: 1.0, alert_prob: 0.05}
+results: {mode: "off"}
+backtest: {as_of_days_before: 1}
