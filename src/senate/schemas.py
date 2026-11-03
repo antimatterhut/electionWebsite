@@ -105,10 +105,77 @@ races_2026 = DataFrameSchema(
     coerce=True,
 )
 
+_GROUPS = ["wnh_college", "wnh_noncollege", "black", "hispanic", "asian", "other"]
+_unit = Check.in_range(0, 1)
+
+ei_group_vote = DataFrameSchema(
+    {
+        "geoid": Column(str, Check.str_matches(r"^\d{5}$")),
+        "group": Column(str, Check.isin(_GROUPS), coerce=True),
+        "theta_mean": Column(float, _unit),
+        "theta_p10": Column(float, _unit),
+        "theta_p90": Column(float, _unit),
+        "n_group": Column(float, Check.ge(0)),
+        "ei_status": Column(str, Check.isin(["ok", "retry", "fallback"]), coerce=True),
+        "rhat_max": Column(float, nullable=True),
+        "ess_min": Column(float, nullable=True),
+        **PROVENANCE,
+    },
+    checks=[Check(lambda df: (df.theta_p10 <= df.theta_p90 + 1e-12).all(), error="theta_p10 > theta_p90")],
+    unique=["geoid", "group"],
+    coerce=True,
+)
+
+ei_shift_2024 = DataFrameSchema(
+    {"region": Column(str), "group": Column(str, Check.isin(_GROUPS)), "delta_mean": Column(float),
+     "delta_sd": Column(float, Check.ge(0)), **PROVENANCE},
+    unique=["region", "group"],
+    coerce=True,
+)
+
+group_swing = DataFrameSchema(
+    {"region": Column(str), "group": Column(str, Check.isin(_GROUPS)), "delta_mean": Column(float),
+     "delta_sd": Column(float, Check.ge(0)), "n_polls": Column(int, Check.ge(0)),
+     "shrinkage_factor": Column(float, Check.ge(0)), **PROVENANCE},
+    unique=["region", "group"],
+    coerce=True,
+)
+
+def _cumulative_monotone(df: pd.DataFrame) -> bool:
+    """Cumulative ballots never decrease as days_out falls, per (state, geoid, mode, party, age, race, cycle)."""
+    k = ["state_po", "geoid", "mode", "party", "age_bin", "race5", "cycle"]
+    d = df.assign(geoid=df.geoid.fillna("")).sort_values(k + ["days_out"], ascending=[True] * len(k) + [False])
+    return bool((d.groupby(k).ballots.diff().dropna() >= 0).all())
+
+
+_early_vote_cols = {
+    "state_po": Column(str, Check.str_length(2, 2)),
+    "geoid": Column(str, nullable=True),
+    "date": Column(nullable=False),
+    "days_out": Column(int, Check.ge(0)),
+    "mode": Column(str, Check.isin(["early_in_person", "mail", "total"])),
+    "party": Column(str, Check.isin(["D", "R", "O", "U", "all"])),
+    "age_bin": Column(str, Check.isin(["18-29", "30-44", "45-64", "65+", "unknown", "all"])),
+    "race5": Column(str, Check.isin(["white", "black", "hispanic", "asian", "other", "all"])),
+    "ballots": Column(int, Check.ge(0)),
+    "cycle": Column(int, Check.isin([2018, 2020, 2022, 2024, 2026])),
+    **PROVENANCE,
+}
+_early_vote_checks = [Check(_cumulative_monotone, error="cumulative ballots decrease over time")]
+
+early_vote_daily = DataFrameSchema(_early_vote_cols, checks=_early_vote_checks, coerce=True)
+early_vote_hist = DataFrameSchema(_early_vote_cols, checks=_early_vote_checks + [
+    Check(lambda df: (df.cycle != 2026).all(), error="hist contains the current cycle")], coerce=True)
+
 SCHEMAS = {
     "pres_county": pres_county,
     "cvap_county": cvap_county,
     "generic_polls": generic_polls,
     "senate_polls": senate_polls,
+    "ei_group_vote": ei_group_vote,
+    "ei_shift_2024": ei_shift_2024,
+    "group_swing": group_swing,
+    "early_vote_daily": early_vote_daily,
+    "early_vote_hist": early_vote_hist,
 }
 validate = pa.check_types  # re-export convenience

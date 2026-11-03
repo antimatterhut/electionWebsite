@@ -74,6 +74,7 @@ sim:
   rho: {region_neighbor: 0.3, state_similarity: 0.2}
   control_threshold: 51
   interval: [0.10, 0.90]
+county: {max_tilt: 6.0}
 geo: {town_layer: false}
 http: {min_interval_s: 0.0, retries: 4, user_agent: "SenateCountyProjection/1.0 (+about-page-url; research project)"}
 validation: {ei_flag_pts: 8, ei_fail_pts: 12}

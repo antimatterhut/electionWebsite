@@ -47,6 +47,12 @@ def parse_pct(x) -> float | None:
     return float(m.group(1)) if m else None
 
 
+def parse_votes(x) -> float | None:
+    """'4,485,745[12]' -> 4485745.0 (None if no digits)."""
+    s = re.sub(r"\[.*?\]|[^\d]", "", str(x))
+    return float(s) if s else None
+
+
 def make_poll_id(pollster: str, field_end, n, pop) -> str:
     return hashlib.sha1(f"{pollster}|{field_end}|{n}|{pop}".encode()).hexdigest()[:12]
 

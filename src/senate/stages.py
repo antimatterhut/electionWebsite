@@ -34,7 +34,7 @@ def _races() -> pd.DataFrame:
 
 
 def fetch_stages() -> list[Stage]:
-    from .ingest import acs_cvap, crosstabs, generic_ballot, pres_results, senate_polls, shapes, validated_voter
+    from .ingest import acs_cvap, crosstabs, early_vote, generic_ballot, pres_results, senate_polls, shapes, validated_voter
 
     return [
         Stage("fetch_pres", pres_results.ingest_pres_results, ["pres_county.parquet"]),
@@ -44,6 +44,7 @@ def fetch_stages() -> list[Stage]:
         Stage("fetch_generic", generic_ballot.ingest_generic_polls, ["generic_polls.parquet"]),
         Stage("fetch_senate_polls", senate_polls.ingest_senate_polls, ["senate_polls.parquet"]),
         Stage("fetch_crosstabs", crosstabs.ingest_crosstabs, ["crosstabs.parquet"]),
+        Stage("fetch_early_vote", early_vote.ingest_early_vote, ["early_vote_daily.parquet", "early_vote_hist.parquet"]),
         Stage("validated_priors", validated_voter.ingest_validated_voter, ["validated_voter_priors.parquet"]),
     ]
 

@@ -176,6 +176,10 @@ class Sim(_M):
     interval: list[float]
 
 
+class County(_M):
+    max_tilt: float
+
+
 class Geo(_M):
     town_layer: bool
 
@@ -216,6 +220,7 @@ class Settings(_M):
     earlyvote: EarlyVote
     turnout: Turnout
     sim: Sim
+    county: County
     geo: Geo
     http: Http
     validation: Validation

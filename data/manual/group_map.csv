@@ -1,1 +1,22 @@
 poll_label,canonical
+"White, college",wnh_college
+"White, bachelor's+",wnh_college
+"White college graduates",wnh_college
+"White, no college",wnh_noncollege
+"White, non-college",wnh_noncollege
+"White non-college",wnh_noncollege
+Black,black
+African American,black
+Hispanic/Latino,hispanic
+Hispanic,hispanic
+Latino,hispanic
+Asian,asian
+Non-white,nonwhite
+Nonwhite,nonwhite
+People of color,nonwhite
+18-29,18-29
+30-44,30-44
+45-64,45-64
+65+,65+
+Men,male
+Women,female
