@@ -1,7 +1,7 @@
 PY ?= python
 AS_OF ?=
 
-.PHONY: site site-test fetch model backtest test update ei crosstab county ei-validate county-backtest earlyvote earlyvote-backtest turnout sim overlay diff publish
+.PHONY: site site-test fetch model backtest test update ei crosstab county ei-validate county-backtest earlyvote earlyvote-backtest turnout sim export overlay diff publish
 fetch:
 	$(PY) -m senate.cli run --stage fetch $(if $(AS_OF),--as-of $(AS_OF),)
 
@@ -42,6 +42,10 @@ turnout:
 sim:
 	$(PY) -m senate.cli run --stage sim
 
+# Site artifacts (states/, counties_national, methodology_params, site data_health) from the finished run.
+export:
+	$(PY) -m senate.cli run --stage export
+
 # Frontend (plan §13 Phase 6). `site` builds the static site (fixture data is generated only if no real artifacts exist).
 site:
 	cd site && npm ci && npm run build
@@ -60,4 +64,4 @@ diff:
 publish:
 	$(PY) -m senate.cli run --stage publish --prev $(PREV) --dest site/static/data
 
-update: fetch model earlyvote turnout sim overlay
+update: fetch model county earlyvote turnout sim export overlay

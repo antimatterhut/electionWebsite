@@ -69,6 +69,9 @@ def test_pres_results_manual_fallback_when_download_blocked(dirs, fake_fetcher):
 
 
 def test_pres_results_without_any_manual_data_fails_loudly(dirs, fake_fetcher):
+    # `dirs` copies the repo's data/manual, which may now hold real results; this test needs them absent.
+    for p in [*dirs["manual"].glob("pres_county_*.csv"), *dirs["manual"].glob("countypres_*.csv")]:
+        p.unlink()
     f = fake_fetcher({"robots.txt": FakeResponse(200, text=""), "dataverse": FakeResponse(400)})
     with pytest.raises(FileNotFoundError, match="no manual presidential results"):
         pres_results.ingest_pres_results(f)

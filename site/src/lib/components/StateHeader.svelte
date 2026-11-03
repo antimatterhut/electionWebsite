@@ -29,10 +29,10 @@
     <svg viewBox="0 0 100 14" class="range" role="img" aria-label="80% interval {marginRange(iv)}, projection {margin(race.proj_margin)}" preserveAspectRatio="none">
       <rect x="0" y="5" width="100" height="4" fill="var(--panel-2)" />
       <rect x={pos(iv[0])} y="3" width={pos(iv[1]) - pos(iv[0])} height="8" fill="var(--accent)" opacity="0.55" />
-      <line x1={pos(0)} x2={pos(0)} y1="0" y2="14" stroke="var(--text)" stroke-width="0.4" />
-      <line x1={pos(race.proj_margin)} x2={pos(race.proj_margin)} y1="1" y2="13" stroke="var(--text)" stroke-width="1.2" />
+      <line x1={pos(0)} x2={pos(0)} y1="0" y2="14" stroke="var(--text)" stroke-width="1" vector-effect="non-scaling-stroke" />
+      <line x1={pos(race.proj_margin)} x2={pos(race.proj_margin)} y1="1" y2="13" stroke="var(--text)" stroke-width="2.5" vector-effect="non-scaling-stroke" />
     </svg>
-    <div class="axis muted"><span>R+{Math.abs(Math.round(lo))}</span><span>Even</span><span>D+{Math.round(hi)}</span></div>
+    <div class="axis muted"><span>R+{Math.abs(Math.round(lo))}</span><span class="even" style:left="{pos(0)}%">Even</span><span>D+{Math.round(hi)}</span></div>
   {/if}
   {#if race.swing_source === 'national_fallback'}
     <p class="notice" role="note">No recent state polling; this projection uses only the national environment.</p>
@@ -48,6 +48,7 @@
   .stats div { display: grid; }
   .stats strong { font-size: 1.4rem; }
   .range { width: 100%; max-width: 560px; height: 22px; display: block; margin-top: 0.5rem; }
-  .axis { display: flex; justify-content: space-between; max-width: 560px; font-size: 0.75rem; }
+  .axis { position: relative; display: flex; justify-content: space-between; max-width: 560px; font-size: 0.75rem; }
+  .axis .even { position: absolute; transform: translateX(-50%); }
   .notice { margin-top: 0.75rem; padding: 0.5rem 0.75rem; background: var(--warn-bg); color: var(--warn-text); border-radius: 6px; }
 </style>

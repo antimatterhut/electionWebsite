@@ -4,8 +4,6 @@
 
   const stops = $derived(legendStops(viewState.view));
   const title = $derived(viewState.view === 'shift' ? 'Shift from 2024 (points)' : 'Projected margin (points)');
-  const lo = $derived(stops[0]!.at);
-  const hi = $derived(stops[stops.length - 1]!.at);
   const label = (at: number, i: number) => {
     const edge = i === 0 || i === stops.length - 1;
     const n = Math.abs(at);
@@ -14,6 +12,8 @@
   };
   // A readable subset of ticks keeps the legend usable on phones.
   const ticks = $derived(stops.filter((_, i) => i % 2 === 0 || i === stops.length - 1));
+  // Swatches are equal-width, so center each tick on its own swatch instead of positioning by value.
+  const left = (i: number) => (i === 0 ? 0 : i === stops.length - 1 ? 100 : ((i + 0.5) / stops.length) * 100);
 </script>
 
 <figure class="legend" aria-label={title}>
@@ -28,13 +28,13 @@
   <div class="ticks" aria-hidden="true">
     {#each ticks as s}
       {@const i = stops.indexOf(s)}
-      <span style:left="{((s.at - lo) / (hi - lo)) * 100}%">{label(s.at, i)}</span>
+      <span style:left="{left(i)}%">{label(s.at, i)}</span>
     {/each}
   </div>
 </figure>
 
 <style>
-  .legend { margin: 0; max-width: 520px; }
+  .legend { margin: 0; flex: 1 1 320px; min-width: 260px; max-width: 520px; }
   figcaption { font-size: 0.85rem; color: var(--muted); margin-bottom: 0.25rem; }
   .swatches { display: flex; list-style: none; margin: 0; padding: 0; height: 14px; border: 1px solid var(--line); }
   .swatches li { flex: 1; }

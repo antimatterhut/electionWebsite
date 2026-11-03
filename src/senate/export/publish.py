@@ -11,8 +11,11 @@ from pathlib import Path
 
 REQUIRED = ["summary.json", "changes.json", "data_health.json"]
 # Files a run may provide; anything absent is carried over from the previous-good tree.
-OVERLAY = ["summary.json", "changes.json", "data_health.json", "diff.md", "backtest_summary.json",
+OVERLAY = ["summary.json", "changes.json", "diff.md", "backtest_summary.json",
            "methodology_params.json", "counties_national.json", "results_overlay.json"]
+# output name -> published name. The pipeline's own output/data_health.json ({stages, tables, ...}) stays internal;
+# the site reads the {sources, flags} version written by export/site_files.py.
+OVERLAY_RENAMES = {"site_data_health.json": "data_health.json"}
 OVERLAY_DIRS = ["states", "topo"]
 
 
@@ -54,6 +57,9 @@ def publish(run_dir: Path, prev_dir: Path | None, dest: Path, expected_states: i
         for f in OVERLAY:
             if (run_dir / f).exists():
                 shutil.copy2(run_dir / f, stage / f)
+        for src, dst in OVERLAY_RENAMES.items():
+            if (run_dir / src).exists():
+                shutil.copy2(run_dir / src, stage / dst)
         for d in OVERLAY_DIRS:
             if (run_dir / d).is_dir():
                 shutil.copytree(run_dir / d, stage / d, dirs_exist_ok=True)
@@ -63,8 +69,18 @@ def publish(run_dir: Path, prev_dir: Path | None, dest: Path, expected_states: i
         raise
     old = dest.with_name(dest.name + ".old")
     shutil.rmtree(old, ignore_errors=True)
-    if dest.exists():
-        dest.rename(old)
-    stage.rename(dest)
+    try:
+        if dest.exists():
+            dest.rename(old)
+        stage.rename(dest)
+    except PermissionError:
+        # Windows refuses to rename a directory another process holds open (e.g. a running `vite dev` watching it):
+        # restore it if the first rename went through, then replace its contents in place.
+        if old.exists() and not dest.exists():
+            old.rename(dest)
+        for child in dest.iterdir():
+            shutil.rmtree(child) if child.is_dir() else child.unlink()
+        shutil.copytree(stage, dest, dirs_exist_ok=True)
+        shutil.rmtree(stage, ignore_errors=True)
     shutil.rmtree(old, ignore_errors=True)
     return dest

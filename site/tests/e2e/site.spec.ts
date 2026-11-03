@@ -74,9 +74,10 @@ test.describe('national page', () => {
     await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   });
 
-  test('fixture banner is shown on mock data', async ({ page }) => {
+  test('fixture banner is shown on mock data only', async ({ page, request }) => {
+    const mock = Boolean((await (await request.get('/data/summary.json')).json()).mock);
     await page.goto('/');
-    await expect(page.getByText('Fixture data.')).toBeVisible();
+    await expect(page.getByText('Fixture data.')).toHaveCount(mock ? 1 : 0);
   });
 });
 

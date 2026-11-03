@@ -14,7 +14,7 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="senate")
     sub = ap.add_subparsers(dest="cmd", required=True)
     run = sub.add_parser("run")
-    run.add_argument("--stage", required=True, choices=["fetch", "model", "backtest", "ei", "crosstab", "county", "ei-validate", "county-backtest", "earlyvote", "earlyvote-backtest", "turnout", "sim", "diff", "publish", "overlay"])
+    run.add_argument("--stage", required=True, choices=["fetch", "model", "backtest", "ei", "crosstab", "county", "ei-validate", "county-backtest", "earlyvote", "earlyvote-backtest", "turnout", "sim", "export", "diff", "publish", "overlay"])
     run.add_argument("--as-of", default=None)
     run.add_argument("--prev", default=None, help="previous published data dir (diff/publish)")
     run.add_argument("--dest", default=None, help="published data dir (publish)")
@@ -91,6 +91,11 @@ def main(argv: list[str] | None = None) -> int:
 
         out = run_sim()
         print(json.dumps(out["sim"]["seats"], indent=2))
+        return 0
+    if args.stage == "export":
+        from .export.site_files import export_site
+
+        print(json.dumps(export_site(), indent=2))
         return 0
     if args.stage in ("diff", "publish", "overlay"):
         from pathlib import Path

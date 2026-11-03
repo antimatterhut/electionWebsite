@@ -49,6 +49,7 @@ describe('states/<ST>.json', () => {
     for (const r of summary.races) {
       const s = read<StateFile>(`states/${r.state}.json`);
       expect(s.run_id).toBe(summary.run_id);
+      if (s.counties.length === 0) { expect(r.county_method, r.state).toBe('none'); continue; }
       expect(s.counties.length).toBeGreaterThan(0);
       const w = s.counties.reduce((a, c) => a + c.votes_proj, 0);
       const mean = s.counties.reduce((a, c) => a + c.votes_proj * c.shift, 0) / w;

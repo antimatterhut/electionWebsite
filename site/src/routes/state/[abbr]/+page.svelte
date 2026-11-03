@@ -18,7 +18,7 @@
   const get = useSummary();
   const summary = $derived(get());
   const race = $derived(summary?.races.find((r) => r.state === data.abbr) ?? null);
-  const detail = $derived(data.detail);
+  const detail = $derived(data.detail && data.detail.counties.length ? data.detail : null);  // no counties (e.g. Alaska) => no county panels
   const runId = $derived(summary?.run_id ?? '');
   const title = $derived(race ? `${race.name ?? race.state} Senate 2026 projection by county` : `${data.abbr} Senate 2026`);
   const desc = $derived(race ? `${race.name} U.S. Senate 2026: projected ${margin(race.proj_margin)}${race.p_dside_win != null ? `, ${Math.round(race.p_dside_win * 100)}% chance the D-side candidate wins` : ''}, with county-level results.` : '');

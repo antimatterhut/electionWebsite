@@ -27,7 +27,15 @@
     else { sortKey = k; dir = k === 'state' ? 1 : -1; }
   }
   const aria = (k: Key) => (sortKey === k ? (dir === 1 ? 'ascending' : 'descending') : 'none');
-  const heads: Array<[Key, string, boolean]> = [['state', 'State', false], ['proj', 'Projected margin', true], ['shift', 'Shift from 2024', true], ['p', 'Chance D wins', true], ['polls', 'Polls', true]];
+  // The first two columns follow the selected view, so their sort keys swap with their labels.
+  const heads = $derived<Array<[Key, string, boolean]>>([
+    ['state', 'State', false],
+    ...(viewState.view === 'shift'
+      ? [['shift', 'Shift from 2024', true], ['proj', 'Projected margin', true]] as Array<[Key, string, boolean]>
+      : [['proj', 'Projected margin', true], ['shift', 'Shift from 2024', true]] as Array<[Key, string, boolean]>),
+    ['p', 'Chance D wins', true],
+    ['polls', 'Polls', true]
+  ]);
   const dside = (r: Race) => `${r.dside.name ?? 'D-side TBD'}${r.dside.party !== 'D' ? ' (' + r.dside.party + ')' : ''}`;
 </script>
 
@@ -65,7 +73,7 @@
               {#if r.dside.party === 'I'}<span title="Independent standing in as the D-side candidate" aria-label="independent D-side candidate"> ◆</span>{/if}
             </th>
             <td class="num"><strong>{primary(viewState.view, r.proj_margin, r.shift)}</strong>{viewState.view === 'shift' ? ` (${margin(r.proj_margin)})` : ''}</td>
-            <td class="num">{viewState.view === 'shift' ? margin(r.shift) : fmtShift(r.shift)}</td>
+            <td class="num">{viewState.view === 'shift' ? margin(r.proj_margin) : fmtShift(r.shift)}</td>
             <td class="num">{pct(r.p_dside_win)}</td>
             <td class="num">{r.polls.n}</td>
           </tr>
