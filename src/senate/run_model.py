@@ -72,7 +72,9 @@ def run_model(cfg: Settings | None = None, as_of: date | None = None, write: boo
         log.warning("warning", code="GB_VS_AGGREGATORS", ours=round(nat["gb_margin"], 2), aggregators=round(agg, 2))
     ev_p = OUTPUT / "early_vote_component.csv"  # separate component from `make earlyvote` (Phase 4)
     ev = pd.read_csv(ev_p).set_index("state_po").E.to_dict() if ev_p.exists() else None
-    summary = build_summary(nat, out["states"], races, nat["a"], nat["b"], early_vote=ev)
+    t_p = OUTPUT / "turnout_component.csv"  # turnout-composition component T_s from `make turnout` (Phase 5)
+    tc = pd.read_csv(t_p).set_index("state_po")["T"].to_dict() if t_p.exists() else None
+    summary = build_summary(nat, out["states"], races, nat["a"], nat["b"], early_vote=ev, turnout=tc)
     if write:
         OUTPUT.mkdir(exist_ok=True)
         write_summary(summary, OUTPUT / "summary.json")

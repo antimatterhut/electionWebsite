@@ -174,6 +174,8 @@ class Sim(_M):
     rho: SimRho
     control_threshold: float
     interval: list[float]
+    d_caucus_total: int
+    chunk: int
 
 
 class County(_M):

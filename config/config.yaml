@@ -74,6 +74,8 @@ sim:
   rho: {region_neighbor: 0.3, state_similarity: 0.2}
   control_threshold: 51
   interval: [0.10, 0.90]
+  d_caucus_total: 47  # D + independents caucusing with D, 119th Congress; UNVERIFIED vs current roster (plan 6.12)
+  chunk: 2000
 county: {max_tilt: 6.0}
 geo: {town_layer: false}
 http: {min_interval_s: 2.0, retries: 4, user_agent: "SenateCountyProjection/1.0 (+about-page-url; research project)"}

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 
 import structlog
@@ -13,7 +14,7 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="senate")
     sub = ap.add_subparsers(dest="cmd", required=True)
     run = sub.add_parser("run")
-    run.add_argument("--stage", required=True, choices=["fetch", "model", "backtest", "ei", "crosstab", "county", "ei-validate", "county-backtest", "earlyvote", "earlyvote-backtest"])
+    run.add_argument("--stage", required=True, choices=["fetch", "model", "backtest", "ei", "crosstab", "county", "ei-validate", "county-backtest", "earlyvote", "earlyvote-backtest", "turnout", "sim"])
     run.add_argument("--as-of", default=None)
     args = ap.parse_args(argv)
     structlog.configure(processors=[structlog.processors.add_log_level, structlog.processors.TimeStamper(fmt="iso"),
@@ -77,6 +78,17 @@ def main(argv: list[str] | None = None) -> int:
         from .earlyvote.backtest import run_earlyvote_backtest
 
         print(run_earlyvote_backtest())
+        return 0
+    if args.stage == "turnout":
+        from .turnout.run_turnout import run_turnout
+
+        print(run_turnout().to_string())
+        return 0
+    if args.stage == "sim":
+        from .sim.run_sim import run_sim
+
+        out = run_sim()
+        print(json.dumps(out["sim"]["seats"], indent=2))
         return 0
     return 2
 

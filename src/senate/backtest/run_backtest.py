@@ -15,6 +15,7 @@ from ..polls.weights import ratings_lookup
 from ..swing import baseline as base
 from ..swing.model import run_state_model
 from . import metrics as M
+from . import sim_backtest as SB
 
 DATA = ROOT / "data" / "manual" / "backtest"
 OUT = ROOT / "output" / "backtest"
@@ -73,10 +74,13 @@ def run_backtest(cfg: Settings | None = None, out_dir: Path = OUT, data_dir: Pat
         (out_dir / str(cycle)).mkdir(exist_ok=True)
         df.to_parquet(out_dir / str(cycle) / "state_errors.parquet", index=False)
         results["cycles"][cycle] = {"national": nat, "metrics": M.state_metrics(df, sigma),
-                                    "polled_share": float(df.polled.mean()), "frame": df}
+                                    "polled_share": float(df.polled.mean()), "frame": df,
+                                    "sim": SB.run_cycle_sim(df, cycle, cfg)}
         for label, w in SENSITIVITY:
             sdf, _ = run_cycle(cycle, cfg, weights=w, data=data)
-            results["sensitivity"].setdefault(label, {})[cycle] = M.state_metrics(sdf, sigma)
+            sm = M.state_metrics(sdf, sigma)
+            sm["brier_sim"] = SB.run_cycle_sim(sdf, cycle, cfg)["brier"]
+            results["sensitivity"].setdefault(label, {})[cycle] = sm
         for days in (30, 60, 90):
             try:
                 rdf, _ = run_cycle(cycle, cfg, days_before=days, data=data)
@@ -102,30 +106,28 @@ def gate(results: dict) -> dict:
             "state_rmse<=4.0 (aim)": m["state_rmse"] <= AIM_STATE_RMSE,
             "not_worse_than_uniform_swing": m["state_rmse"] <= m["naive_rmse"],
             "abs_bias<=1.5": abs(m["bias"]) <= BIAS_MAX,
-            "brier<=0.10 (provisional)": m["brier_provisional"] <= 0.10,
-            "coverage80_in_0.70-0.90 (provisional)": 0.70 <= m["coverage80_provisional"] <= 0.90,
+            **{f"{k} (simulation)": v for k, v in SB.gate(r["sim"]).items()},
         }
     return checks
 
 
 def sensitivity_md(results: dict) -> str:
-    lines = ["| Weights (nat:state) | 2022 State RMSE | 2022 Brier* | 2018 State RMSE | 2018 Brier* |",
+    lines = ["| Weights (nat:state) | 2022 State RMSE | 2022 Brier | 2018 State RMSE | 2018 Brier |",
              "|---|---|---|---|---|"]
     for label, _ in SENSITIVITY:
         s = results["sensitivity"][label]
         name = f"**{label}**" if "default" in label else label
-        lines.append(f"| {name} | {s[2022]['state_rmse']:.2f} | {s[2022]['brier_provisional']:.3f} | "
-                     f"{s[2018]['state_rmse']:.2f} | {s[2018]['brier_provisional']:.3f} |")
-    lines += ["", "\\* Provisional Brier: win probability = Phi(projected margin / sigma_mkt) until the Phase 5 "
-              "simulation. Informational only; the default stays 2:1."]
+        lines.append(f"| {name} | {s[2022]['state_rmse']:.2f} | {s[2022]['brier_sim']:.3f} | "
+                     f"{s[2018]['state_rmse']:.2f} | {s[2018]['brier_sim']:.3f} |")
+    lines += ["", "Brier from the Phase 5 state-level simulation. Informational only; the default stays 2:1."]
     return "\n".join(lines) + "\n"
 
 
 def report_md(results: dict, cfg: Settings) -> str:
-    L = ["# Senate state-level backtest (Phase 2)", "",
+    L = ["# Senate state-level backtest (Phases 2 + 5)", "",
          f"As-of cutoff: election day minus {cfg.backtest.as_of_days_before} day(s); polls dated after the cutoff are "
          "never used. Truth = certified two-party Senate margin (D-side minus R); baseline = prior presidential "
-         "election. Win-probability metrics are provisional (see sensitivity.md).", ""]
+         "election. Win probabilities and intervals come from the Phase 5 state-level simulation.", ""]
     for cycle, r in results["cycles"].items():
         m, n = r["metrics"], r["national"]
         L += [f"## {cycle} (baseline {CYCLES[cycle]['baseline_year']})", "",
@@ -135,10 +137,17 @@ def report_md(results: dict, cfg: Settings) -> str:
               f"- Races {m['n_races']} ({r['polled_share']:.0%} polled); **state RMSE {m['state_rmse']:.2f}**, "
               f"uniform-national-swing RMSE {m['naive_rmse']:.2f}; bias {m['bias']:+.2f}; "
               f"winner accuracy {m['winner_accuracy']:.0%}",
-              f"- Provisional Brier {m['brier_provisional']:.3f}; provisional 80% coverage "
-              f"{m['coverage80_provisional']:.2f}",
+              f"- Simulation: Brier {r['sim']['brier']:.3f}, log-loss {r['sim']['log_loss']:.3f}, 80% interval coverage "
+              f"{r['sim']['coverage80']:.2f}; actual D-side wins {r['sim']['actual_d_wins']} of {r['sim']['n_races']} at the "
+              f"{r['sim']['actual_seat_percentile']:.0%} percentile of the simulated distribution (mean "
+              f"{r['sim']['sim_mean_d_wins']:.1f}, 80% interval {r['sim']['sim_interval80_d_wins'][0]:.0f}-"
+              f"{r['sim']['sim_interval80_d_wins'][1]:.0f}); error model: {r['sim']['error_model']['source']}",
               "", "| Check | Pass |", "|---|---|"]
         L += [f"| {k} | {'yes' if v else '**NO**'} |" for k, v in results["gate"][cycle].items()]
+        L += ["", "Reliability (simulated win probability, 10 bins):", "", "| Bin | n | mean forecast | observed |",
+              "|---|---|---|---|"]
+        L += [f"| {b['bin']} | {b['n']} | " + (f"{b['mean_p']:.2f} | {b['observed']:.2f} |" if b["n"] else "- | - |")
+              for b in r["sim"]["reliability"]]
         L += ["", "Worst misses:", "", "| Race | Projected | Actual | Error | Polled | n polls |",
               "|---|---|---|---|---|---|"]
         f = r["frame"].reindex(r["frame"].error.abs().sort_values(ascending=False).index).head(8)

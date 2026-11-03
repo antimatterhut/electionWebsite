@@ -1,7 +1,7 @@
 PY ?= python
 AS_OF ?=
 
-.PHONY: fetch model backtest test update ei crosstab county ei-validate county-backtest earlyvote earlyvote-backtest
+.PHONY: site site-test fetch model backtest test update ei crosstab county ei-validate county-backtest earlyvote earlyvote-backtest turnout sim
 fetch:
 	$(PY) -m senate.cli run --stage fetch $(if $(AS_OF),--as-of $(AS_OF),)
 
@@ -35,5 +35,18 @@ earlyvote:
 
 earlyvote-backtest:
 	$(PY) -m senate.cli run --stage earlyvote-backtest
+
+turnout:
+	$(PY) -m senate.cli run --stage turnout
+
+sim:
+	$(PY) -m senate.cli run --stage sim
+
+# Frontend (plan §13 Phase 6). `site` builds the static site (fixture data is generated only if no real artifacts exist).
+site:
+	cd site && npm ci && npm run build
+
+site-test:
+	cd site && npm run check && npm test && npm run cb && npm run size && npm run test:e2e
 
 update: fetch model
