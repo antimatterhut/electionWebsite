@@ -150,7 +150,7 @@ writeFileSync(join(data, 'data_health.json'), JSON.stringify({
   flags: ['Fixture data: not a projection']
 }));
 writeFileSync(join(data, 'methodology_params.json'), JSON.stringify({
-  weights: { national: 2, state_poll: 1 }, half_life_days: { senate: 14, generic: 21 }, market: { enabled: false, mu: 0.1, weight_cap: 0.2 },
+  weights: { national: 2, state_poll: 1 }, combine: 'precision', precision: { sigma_prior: 4, sigma_bias: 1, sigma_poll: 3.9, w_min: 0.4, w_max: 0.9, incumbent_pts: 3 }, half_life_days: { senate: 14, generic: 21 }, market: { enabled: false, mu: 0.1, weight_cap: 0.2 },
   earlyvote: { cap_pts: 1.5, shrink: 0.5 }, county: { max_tilt: 6 }, sim: { n_draws: 20000, control_threshold: 51 }
 }));
 const bt = join(root, 'output', 'backtest', 'metrics.json');

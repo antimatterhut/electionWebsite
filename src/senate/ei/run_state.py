@@ -21,6 +21,7 @@ log = structlog.get_logger()
 CODE_VERSION = "phase3-0"
 CACHE = ROOT / "data" / "cache" / "ei"
 Z10 = 1.2815515655446004
+PRIOR_RECONCILED = "prior_reconciled"  # EI did not converge: priors-only theta, shifted per county to hit its D votes
 
 
 @dataclass
@@ -66,7 +67,7 @@ def build_data(job: Job, groups_tbl: pd.DataFrame, votes: pd.DataFrame, geo: pd.
     sidx = gg.state_po.map({s: i for i, s in enumerate(job.states)}).to_numpy() if len(job.states) > 1 else None
     return EIData(v.geoid.to_numpy(), v.state_po.to_numpy(), v.votes_d.to_numpy(float),
                   (v.votes_d + v.votes_r).to_numpy(float), n, x.to_numpy(float), ridx, regions,
-                  pr.mu.to_numpy(), pr.sd.to_numpy(), g, list(x.columns), sidx, list(job.states))
+                  pr.mu.to_numpy(), pr.sd.to_numpy(), g, list(x.columns), sidx, list(job.states), cfg.ei.county_eps)
 
 
 def input_hash(d: EIData, cfg: Settings) -> str:
@@ -128,6 +129,12 @@ def fit_job(d: EIData, name: str, cfg: Settings, use_cache: bool = True, cache_d
     cache = (cache_dir or CACHE) / f"{name}_{input_hash(d, cfg)}"
     if use_cache and cache.with_suffix(".parquet").exists():
         meta = json.loads(cache.with_suffix(".json").read_text())
+        if meta["status"] == "fallback":  # legacy unreconciled fallback: rebuild it (no sampling involved) and re-cache
+            tbl = _finish(d, prior_only(d), PRIOR_RECONCILED, meta["diag"], reconciled=True)
+            tbl["job"] = name
+            tbl.to_parquet(cache.with_suffix(".parquet"), index=False)
+            cache.with_suffix(".json").write_text(json.dumps({"status": PRIOR_RECONCILED, "diag": meta["diag"]}))
+            return JobResult(name, tbl, PRIOR_RECONCILED, meta["diag"], time.time() - t0, True)
         return JobResult(name, pd.read_parquet(cache.with_suffix(".parquet")), meta["status"], meta["diag"],
                          time.time() - t0, True)
     s = cfg.ei.sampler
@@ -146,7 +153,7 @@ def fit_job(d: EIData, name: str, cfg: Settings, use_cache: bool = True, cache_d
             log.warning("warning", code="EI_SAMPLER_ERROR", job=name, error=str(e)[:200])
     if summ is None:
         log.warning("warning", code="EI_FALLBACK", job=name, note="priors-only distribution")
-        tbl = _finish(d, prior_only(d), "fallback", diag, reconciled=False)
+        tbl = _finish(d, prior_only(d), PRIOR_RECONCILED, diag, reconciled=True)
     else:
         tbl = _finish(d, summ, status, diag, reconciled=True)
     tbl["job"] = name
@@ -154,6 +161,29 @@ def fit_job(d: EIData, name: str, cfg: Settings, use_cache: bool = True, cache_d
     tbl.to_parquet(cache.with_suffix(".parquet"), index=False)
     cache.with_suffix(".json").write_text(json.dumps({"status": tbl.ei_status.iloc[0], "diag": diag}))
     return JobResult(name, tbl, tbl.ei_status.iloc[0], diag, time.time() - t0)
+
+
+def rake_table(tbl: pd.DataFrame, votes: pd.DataFrame, validated: pd.DataFrame | None, groups: list[str]
+               ) -> tuple[pd.DataFrame, dict]:
+    """Rake the pooled EI table to the validated group contrasts (ei/rake.py); returns the table and a report."""
+    from ..crosstab.harmonize import validated_baseline
+    from .rake import rake
+
+    vt = tbl.astype({"group": str}).pivot(index="geoid", columns="group", values="theta_mean")[groups]
+    n = tbl.astype({"group": str}).pivot(index="geoid", columns="group", values="n_group")[groups]
+    vd = votes.set_index("geoid").votes_d.reindex(vt.index).to_numpy(float)
+    tg = np.array([np.nan if (b := validated_baseline(validated, "national", g)) is None else (b[0] + 100) / 200
+                   for g in groups])
+    off, c, delta = rake(logit(vt.to_numpy()), n.to_numpy(), vd, tg)
+    ci = pd.Series(c, index=vt.index)
+    key = pd.MultiIndex.from_arrays([tbl.geoid, tbl.group.astype(str)])
+    o = pd.Series(off, index=groups).reindex(tbl.group.astype(str)).to_numpy()
+    shift = o + ci.reindex(tbl.geoid).to_numpy()
+    out = tbl.copy()
+    for col in ("theta_mean", "theta_p10", "theta_p90"):
+        out[col] = 1 / (1 + np.exp(-(logit(tbl[col].to_numpy(float)) + shift)))
+    out["ei_shift_c"] = out.ei_shift_c.to_numpy(float) + ci.reindex(tbl.geoid).to_numpy()
+    return out, {"group_offsets": dict(zip(groups, off.round(4).tolist())), "delta": round(delta, 4)}
 
 
 def run_all(cfg: Settings | None = None, states: list[str] | None = None, workers: int | None = None,
@@ -173,9 +203,13 @@ def run_all(cfg: Settings | None = None, states: list[str] | None = None, worker
     tbl = pd.concat([r.table for r in res], ignore_index=True).drop(columns=["job"])
     tbl["group"] = tbl.group.astype("category")
     tbl["ei_status"] = tbl.ei_status.astype("category")
+    rake_info = {}
+    if cfg.ei.rake_to_validated:
+        tbl, rake_info = rake_table(tbl, inp["v24"], validated, cfg.ei.groups)
     out = stamp(tbl, "ei:model_rxc", CODE_VERSION, "ok")
     write_parquet(out, processed_dir() / "ei_group_vote.parquet")
-    report = {r.name: {"status": r.status, "seconds": round(r.seconds, 1), "cached": r.cached, **r.diag} for r in res}
+    report = {"_rake": rake_info, **{r.name: {"status": r.status, "seconds": round(r.seconds, 1), "cached": r.cached,
+                                              **r.diag} for r in res}}
     rd = ROOT / "output" / "ei"
     rd.mkdir(parents=True, exist_ok=True)
     (rd / "run_report.json").write_text(json.dumps(report, indent=2))

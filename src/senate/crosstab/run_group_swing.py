@@ -13,7 +13,8 @@ from ..ei.groups import _STATE_REGION, GROUPS
 from ..ingest._base import processed_dir, stamp, write_parquet
 from ..county.construct import regional_weights
 from ..ei.shift_ei import group_pattern
-from .harmonize import age_gradient, baseline_table, harmonize
+from ..county.urban import class_swings
+from .harmonize import age_gradient, baseline_table, ei_baseline_sd_floor, harmonize, harmonize_area
 from .hier_model import fit_group_swings
 
 log = structlog.get_logger()
@@ -43,6 +44,8 @@ def run_group_swing(cfg: Settings | None = None, s_nat: float | None = None,
     geo = inp["geo"]
     if s_nat is None:
         s_nat = float(json.loads((OUTPUT / "national_swing.json").read_text())["s_nat"])
+    if state_swing is None and (OUTPUT / "state_swing_2026.csv").exists():
+        state_swing = pd.read_csv(OUTPUT / "state_swing_2026.csv")
     cx_p = proc / "crosstabs.parquet"
     cx = pd.read_parquet(cx_p) if cx_p.exists() else pd.DataFrame()
     regions = sorted(geo.region.unique())
@@ -55,7 +58,10 @@ def run_group_swing(cfg: Settings | None = None, s_nat: float | None = None,
               d.assign(geography=d.region).groupby(["geography", "group"], observed=True).n_group.sum().reset_index(),
               d.assign(geography=d.state_po).groupby(["geography", "group"], observed=True).n_group.sum().reset_index(),
           ])).rename(columns={"n_group": "w"}))
-    cells, age_cells = harmonize(cx, base, gw, cfg.crosstab.deff, cfg.crosstab.min_n) if len(cx) else (
+    ei_floor = ei_baseline_sd_floor(base["national"], I.load_validated(), cfg.crosstab.baseline_sd_floor_logit)
+    log.info("ei_baseline_sd_floor", pts=round(ei_floor, 2))
+    cells, age_cells = harmonize(cx, base, gw, cfg.crosstab.deff, cfg.crosstab.min_n, I.load_validated(),
+                              cfg.crosstab.baseline_sd_floor_logit, ei_floor) if len(cx) else (
         pd.DataFrame(columns=["poll_id", "geography", "group", "z", "var"]), pd.DataFrame())
     shift_p = proc / "ei_shift_2024.parquet"
     if shift_p.exists():
@@ -74,10 +80,16 @@ def run_group_swing(cfg: Settings | None = None, s_nat: float | None = None,
         ss = state_swing.set_index("state_po").swing
         offset = np.array([float(ss.get(c, s_nat)) - s_nat if c in _STATE_REGION else 0.0 for c in cells.geography])
     gs = fit_group_swings(cells, GROUPS, regions, pattern_g, s_nat, W, cfg, offset)
+    (OUTPUT / "county").mkdir(parents=True, exist_ok=True)
+    cells.to_csv(OUTPUT / "county" / "crosstab_cells.csv", index=False)  # which baseline (validated|ei) each cell used
     ag = age_gradient(age_cells, _age_baseline(), sd_young_share=_sd_young(inp["age"]))
     out = stamp(gs, "crosstab:hier_model", "phase3-0", "ok" if len(cells) else "manual")
     write_parquet(out, proc / "group_swing.parquet")
-    (proc / "gradients.json").write_text(json.dumps({**ag, "gender_gradient": 0.0}, indent=2))
+    area = (class_swings(harmonize_area(cx, cfg.crosstab.deff, cfg.crosstab.min_n, I.load_validated(),
+                                        cfg.crosstab.baseline_sd_floor_logit)) if len(cx) else {})
+    (proc / "area_swing.json").write_text(json.dumps(area, indent=2))  # {} -> no urban term (reason: no area cells)
+    (proc / "gradients.json").write_text(json.dumps({**ag, "gender_gradient": 0.0,
+                                                     "area_classes_with_data": sorted(area)}, indent=2))
     return out
 
 

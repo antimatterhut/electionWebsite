@@ -12,7 +12,7 @@ AGE_MID = {"18-29": 24.0, "30-44": 37.0, "45-64": 54.5, "65+": 75.0}
 AGE_SD_YEARS = 17.5
 STATE_MIN_N = 200  # state-level crosstabs only for n_group >= 200 (plan §6.7)
 
-CELL_COLS = ["poll_id", "geography", "group", "y", "b", "z", "var", "n_group", "nonwhite"]
+CELL_COLS = ["poll_id", "geography", "group", "y", "b", "z", "var", "n_group", "nonwhite", "b_source"]
 
 
 def baseline_table(ei: pd.DataFrame, geo: pd.DataFrame, level: str) -> pd.DataFrame:
@@ -33,6 +33,39 @@ def baseline_table(ei: pd.DataFrame, geo: pd.DataFrame, level: str) -> pd.DataFr
     return out.rename(columns={"_k": "geography"})
 
 
+def validated_baseline(validated: pd.DataFrame | None, geography: str, group: str, sd_floor_logit: float = 0.10,
+                       year: int = 2024, group_dim: str | None = None) -> tuple[float, float] | None:
+    """(b, b_sd) in margin points from the validated-voter studies for one group and geography, or None.
+
+    b = 100(2 mean(d_share_2p) - 1); b_sd = 200 * spread across studies of d_share_2p, floored at the equivalent of
+    `sd_floor_logit` on the logit scale (p(1-p) * floor) so a single study is not treated as exact."""
+    if validated is None or not len(validated):
+        return None
+    q = validated[(validated.year == year) & (validated.geography == geography) & (validated.group_value == group)]
+    if group_dim is not None:
+        q = q[q.group_dim == group_dim]
+    if not len(q):
+        return None
+    m = q.d_share_2p.astype(float)
+    p = float(m.mean())
+    sd = max(float(m.std(ddof=0)) if len(m) > 1 else 0.0, p * (1 - p) * sd_floor_logit)
+    return 100.0 * (2 * p - 1), 200.0 * sd
+
+
+def ei_baseline_sd_floor(national_ei: pd.DataFrame, validated: pd.DataFrame | None, sd_floor_logit: float = 0.10
+                         ) -> float:
+    """RMS gap (margin pts) between EI's national group baselines and the validated-voter 2024 means.
+
+    EI's own posterior b_sd ignores model misspecification (county data identify the white education split and the
+    smaller groups weakly), so it is floored at this measured discrepancy. 0 when no group has a validated baseline."""
+    gaps = []
+    for r in national_ei.itertuples():
+        vb = validated_baseline(validated, "national", r.group, sd_floor_logit)
+        if vb is not None:
+            gaps.append(r.b - vb[0])
+    return float(np.sqrt(np.mean(np.square(gaps)))) if gaps else 0.0
+
+
 def nonwhite_baseline(base: pd.DataFrame, weights: pd.DataFrame) -> pd.DataFrame:
     """Combined 'nonwhite' baseline per geography: n-weighted mean of the four non-white group baselines."""
     d = base[base.group.isin(NONWHITE)].merge(weights, on=["geography", "group"], how="left")
@@ -51,12 +84,18 @@ def geography_region(geography: str) -> str:
 
 
 def harmonize(cx: pd.DataFrame, base: dict[str, pd.DataFrame], group_weights: pd.DataFrame, deff: float,
-              min_n: int = 75) -> tuple[pd.DataFrame, pd.DataFrame]:
+              min_n: int = 75, validated: pd.DataFrame | None = None, sd_floor_logit: float = 0.10,
+              ei_sd_floor: float = 0.0
+              ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Race/education cells -> observation table; age cells returned separately for the gradient model.
 
     base: {'national': ..., 'region': ..., 'state': ...} from baseline_table. group_weights: geography, group, w
     (n_group, used to split 'nonwhite' cells). Returns (cells, age_cells). Cells follow
     z = y - b, Var(z) = (100*2*sqrt(p(1-p)) / sqrt(n/deff))^2 + b_sd^2 ('nonwhite': variance x2).
+
+    The 2024 baseline b is the validated-voter studies' mean when `validated` has a 2024 row for that group and
+    geography (b_sd = spread across studies); otherwise the EI baseline. With EI in priors-only fallback the EI
+    baseline is just the placeholder prior, so the validated rows are strongly preferred. `b_source` records which.
     """
     rows, age_rows = [], []
     for r in cx.itertuples():
@@ -76,26 +115,62 @@ def harmonize(cx: pd.DataFrame, base: dict[str, pd.DataFrame], group_weights: pd
         y = 100.0 * (r.dside_pct - r.rside_pct) / (r.dside_pct + r.rside_pct)
         bt = base[lvl]
         if r.group_value == "nonwhite":
-            nb = nonwhite_baseline(bt[bt.geography == geo], group_weights[group_weights.geography == geo])
+            vb = [validated_baseline(validated, geo, g, sd_floor_logit) for g in NONWHITE]
+            w = group_weights[(group_weights.geography == geo) & group_weights.group.isin(NONWHITE)]
+            wg = {g: float(w.loc[w.group == g, "w"].sum()) for g in NONWHITE}
+            if all(v is not None for v in vb) and sum(wg.values()) > 0:
+                ws = np.array([wg[g] for g in NONWHITE])
+                nb = pd.DataFrame({"b": [float(np.average([v[0] for v in vb], weights=ws))],
+                                   "b_sd": [float(np.sqrt(np.sum((ws / ws.sum()) ** 2 * np.array([v[1] for v in vb]) ** 2)))]})
+                src = "validated"
+            else:
+                nb = nonwhite_baseline(bt[bt.geography == geo], group_weights[group_weights.geography == geo])
+                src = "ei"
             if nb.empty:
                 continue
-            w = group_weights[(group_weights.geography == geo) & group_weights.group.isin(NONWHITE)]
             tot = w.w.sum() or 1.0
             for g in NONWHITE:
                 share = float(w.loc[w.group == g, "w"].sum() / tot) if tot else 0.25
                 rows.append(dict(poll_id=r.poll_id, geography=geo, group=g, y=y, b=nb.b.iloc[0], z=y - nb.b.iloc[0],
-                                 var=2 * (samp_var + nb.b_sd.iloc[0] ** 2), n_group=r.n_group * share, nonwhite=True))
+                                 var=2 * (samp_var + max(float(nb.b_sd.iloc[0]), ei_sd_floor if src == "ei" else 0.0) ** 2), n_group=r.n_group * share, nonwhite=True,
+                                 b_source=src))
             continue
         if r.group_value not in GROUPS:
             continue
-        b = bt[(bt.geography == geo) & (bt.group == r.group_value)]
-        if b.empty:
-            continue
-        rows.append(dict(poll_id=r.poll_id, geography=geo, group=r.group_value, y=y, b=float(b.b.iloc[0]),
-                         z=y - float(b.b.iloc[0]), var=samp_var + float(b.b_sd.iloc[0]) ** 2,
-                         n_group=r.n_group, nonwhite=False))
+        vb = validated_baseline(validated, geo, r.group_value, sd_floor_logit)
+        if vb is not None:
+            b_, bsd_, src = vb[0], vb[1], "validated"
+        else:
+            b = bt[(bt.geography == geo) & (bt.group == r.group_value)]
+            if b.empty:
+                continue
+            b_, bsd_, src = float(b.b.iloc[0]), max(float(b.b_sd.iloc[0]), ei_sd_floor), "ei"
+        rows.append(dict(poll_id=r.poll_id, geography=geo, group=r.group_value, y=y, b=b_, z=y - b_,
+                         var=samp_var + bsd_**2, n_group=r.n_group, nonwhite=False, b_source=src))
     cells = pd.DataFrame(rows, columns=CELL_COLS)
     return cells, pd.DataFrame(age_rows)
+
+
+AREA_CLASSES = ["urban", "suburban", "rural"]
+
+
+def harmonize_area(cx: pd.DataFrame, deff: float, min_n: int, validated: pd.DataFrame | None,
+                   sd_floor_logit: float = 0.10) -> pd.DataFrame:
+    """National urban/suburban/rural crosstab cells -> group, z = y - b (validated-voter 2024 area margin), var.
+    Cells without a validated 2024 area baseline are dropped (no EI baseline exists for area type)."""
+    rows = []
+    for r in cx.itertuples():
+        if r.group_value not in AREA_CLASSES or r.n_group < min_n or r.geography != "national":
+            continue
+        vb = validated_baseline(validated, "national", r.group_value, sd_floor_logit)
+        if vb is None:
+            continue
+        p = r.dside_pct / (r.dside_pct + r.rside_pct)
+        samp_var = (100 * 2 * np.sqrt(p * (1 - p)) / np.sqrt(r.n_group / deff)) ** 2
+        y = 100.0 * (r.dside_pct - r.rside_pct) / (r.dside_pct + r.rside_pct)
+        rows.append(dict(poll_id=r.poll_id, group=r.group_value, y=y, b=vb[0], z=y - vb[0], var=samp_var + vb[1] ** 2,
+                         n_group=r.n_group))
+    return pd.DataFrame(rows, columns=["poll_id", "group", "y", "b", "z", "var", "n_group"])
 
 
 def age_gradient(age_cells: pd.DataFrame, age_baseline: pd.DataFrame | None, sd_young_share: float = 0.05

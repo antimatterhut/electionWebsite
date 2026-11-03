@@ -37,6 +37,7 @@ def build_summary(national: dict, states: pd.DataFrame, races: pd.DataFrame, a: 
         s = by_state.loc[r.state_po]
         components = {"national": national["s_nat"], "state_poll": s.s_poll, "market": None,
                       "market_weight": s.market_weight, "state_swing": s.swing,
+                      "demographic": float(s.s_demo) if "s_demo" in s else 0.0,
                       "turnout": float((turnout or {}).get(r.state_po, 0.0)),
                       "early_vote": float((early_vote or {}).get(r.state_po, 0.0))}
         proj = s.m0 + components["state_swing"] + components["turnout"] + components["early_vote"]
@@ -51,7 +52,9 @@ def build_summary(national: dict, states: pd.DataFrame, races: pd.DataFrame, a: 
             "pres2024_margin": _clean(float(s.m0)), "proj_margin": _clean(float(proj)),
             "shift": _clean(float(s.swing)), "swing_source": s.swing_source,
             "components": {k: _clean(float(v)) if v is not None else None for k, v in components.items()},
-            "polls": {"n": int(s.n_polls), "avg_margin": _clean(float(s.poll_margin)), "n_eff": _clean(float(s.n_eff))},
+            "polls": {"n": int(s.n_polls), "avg_margin": _clean(float(s.poll_margin)), "n_eff": _clean(float(s.n_eff)),
+                      "w_poll": _clean(float(s.w_poll)) if "w_poll" in s else None,
+                      "poll_var": _clean(float(s.poll_var)) if "poll_var" in s else None},
         })
     return {
         "run_id": run_id or datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ"),

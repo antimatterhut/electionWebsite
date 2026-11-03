@@ -8,6 +8,10 @@ export interface TooltipContent { title: string; rows: TooltipRow[]; stateLink: 
 export function methodLabel(m: string | undefined): string {
   switch (m) {
     case 'ei_crosstab': return 'EI + crosstabs';
+    case 'group_tilt': return 'Group swings (crosstabs)';
+    case 'group_tilt+age': return 'Group swings + age';
+    case 'group_tilt+urban': return 'Group swings + urban/rural';
+    case 'group_tilt+age+urban': return 'Group swings + age + urban/rural';
     case 'age_only': return 'State swing + age term';
     case 'uniform': return 'Uniform state swing';
     default: return m ?? 'n/a';

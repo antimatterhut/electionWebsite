@@ -116,7 +116,7 @@ ei_group_vote = DataFrameSchema(
         "theta_p10": Column(float, _unit),
         "theta_p90": Column(float, _unit),
         "n_group": Column(float, Check.ge(0)),
-        "ei_status": Column(str, Check.isin(["ok", "retry", "fallback"]), coerce=True),
+        "ei_status": Column(str, Check.isin(["ok", "retry", "prior_reconciled", "fallback"]), coerce=True),
         "rhat_max": Column(float, nullable=True),
         "ess_min": Column(float, nullable=True),
         **PROVENANCE,

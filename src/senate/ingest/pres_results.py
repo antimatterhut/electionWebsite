@@ -14,6 +14,7 @@ from ._base import log, manual_dir, processed_dir, stamp, write_parquet
 # DOI verified against the Dataverse API on 2026-11-02 (title: County Presidential Election Returns 2000-2024).
 MEDSL_DOI = "doi:10.7910/DVN/VOQCHQ"
 YEARS = (2020, 2024)
+NON_CANDIDATES = {"TOTAL VOTES CAST", "OVERVOTES", "UNDERVOTES"}
 
 
 def clean_medsl(raw: pd.DataFrame) -> pd.DataFrame:
@@ -23,16 +24,21 @@ def clean_medsl(raw: pd.DataFrame) -> pd.DataFrame:
     df = df[(df.office.str.upper() == "US PRESIDENT") & (df.year.isin(YEARS))]
     df["county_fips"] = pad_county(df["county_fips"])
     df["party3"] = df.party.str.upper().map({"DEMOCRAT": "D", "DEMOCRATIC": "D", "REPUBLICAN": "R"}).fillna("OTHER")
-    # sum split modes (early/election day/mail) and duplicate rows; totalvotes repeats per candidate row so
-    # take it once per (year, county, mode) before summing modes
-    cand = df.groupby(["year", "county_fips", "party3"], as_index=False).candidatevotes.sum()
+    # 2024 MEDSL carries a TOTAL row alongside per-mode rows for many states (summing both double-counts). Where a
+    # county has TOTAL rows keep only those; otherwise sum its modes. A missing mode is its own mode (ID, NC, UT ...
+    # report mode-less rows), and the TX/WI/WV "TOTAL VOTES CAST" pseudo-candidate rows are not votes for anyone.
+    df["mode_k"] = df["mode"].fillna("").str.upper().str.strip()
+    has_total = df.mode_k.eq("TOTAL").groupby([df.year, df.county_fips]).transform("max").astype(bool)
+    df = df[~has_total | df.mode_k.eq("TOTAL")]
+    real = ~df.candidate.str.upper().isin(NON_CANDIDATES)
+    cand = df[real].groupby(["year", "county_fips", "party3"], as_index=False).candidatevotes.sum()
     wide = cand.pivot_table(index=["year", "county_fips"], columns="party3", values="candidatevotes",
                             aggfunc="sum", fill_value=0).reset_index()
     for c in ("D", "R", "OTHER"):
         if c not in wide:
             wide[c] = 0
-    tot = (df.drop_duplicates(["year", "county_fips", "mode", "candidate", "party", "candidatevotes"])
-           .groupby(["year", "county_fips", "mode"], as_index=False).totalvotes.max()
+    # totalvotes repeats per candidate row: take it once per (year, county, mode) before summing modes
+    tot = (df.groupby(["year", "county_fips", "mode_k"], as_index=False).totalvotes.max()
            .groupby(["year", "county_fips"], as_index=False).totalvotes.sum())
     out = wide.merge(tot, on=["year", "county_fips"], how="left")
     out = out.rename(columns={"county_fips": "geoid", "D": "votes_d", "R": "votes_r", "OTHER": "votes_other",

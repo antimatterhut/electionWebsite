@@ -5,8 +5,10 @@ export interface Step { key: string; label: string; value: number; note?: string
 
 /**
  * baseline (2024) -> national environment -> race polls -> market -> turnout -> early vote -> projection.
- * state_swing = (1-mu) * (a*S_nat + b*S_poll)/(a+b) + mu*S_mkt for polled states; unpolled states have only the
- * national part. Any remainder (e.g. volume scaling) is shown as "other" so the steps always sum to proj_margin.
+ * state_swing = (1-mu) * ((1-w)*S_prior + w*S_poll) + mu*S_mkt for polled states, where w is the race's precision
+ * weight (races[].polls.w_poll; the fixed b/(a+b) when absent); unpolled states have only the prior. The prior is the
+ * national swing plus components.demographic (national group swings applied to the state's electorate). Any
+ * remainder (e.g. the incumbency shift) is shown as "other" so the steps always sum to proj_margin.
  */
 export function decompose(r: Race, weights: { national: number; state_poll: number }): { steps: Step[]; total: number } {
   const c = r.components;
@@ -14,13 +16,17 @@ export function decompose(r: Race, weights: { national: number; state_poll: numb
   const a = weights.national, b = weights.state_poll;
   const polled = r.swing_source !== 'national_fallback' && c.state_poll != null;
   const base = 1 - mu;
-  const nat = c.national == null ? 0 : polled ? (base * a * c.national) / (a + b) : base * c.national;
-  const poll = polled ? (base * b * (c.state_poll as number)) / (a + b) : 0;
+  const w = r.polls.w_poll ?? b / (a + b);
+  const share = polled ? base * (1 - w) : base; // weight the prior gets in the state swing
+  const nat = c.national == null ? 0 : share * c.national;
+  const demo = share * (c.demographic ?? 0);
+  const poll = polled ? base * w * (c.state_poll as number) : 0;
   const mkt = c.market != null && mu > 0 ? mu * c.market : 0;
   const state = c.state_swing ?? nat + poll + mkt;
-  const other = state - nat - poll - mkt;
+  const other = state - nat - demo - poll - mkt;
   const steps: Step[] = [
-    { key: 'national', label: 'National environment', value: nat, note: `${(a / (a + b)).toFixed(2)} of the pre-market swing` },
+    { key: 'national', label: 'National environment', value: nat, note: polled ? `${(1 - w).toFixed(2)} of the pre-market swing` : undefined },
+    ...(Math.abs(demo) > 0.005 ? [{ key: 'demographic', label: 'Demographic mix', value: demo, note: 'national group swings applied to this electorate' }] : []),
     { key: 'polls', label: 'Race polls', value: poll, note: polled ? undefined : 'no recent state polling' }
   ];
   if (mkt !== 0) steps.push({ key: 'market', label: 'Betting markets', value: mkt });

@@ -35,7 +35,7 @@
     <div class="axis muted"><span>R+{Math.abs(Math.round(lo))}</span><span class="even" style:left="{pos(0)}%">Even</span><span>D+{Math.round(hi)}</span></div>
   {/if}
   {#if race.swing_source === 'national_fallback'}
-    <p class="notice" role="note">No recent state polling; this projection uses only the national environment.</p>
+    <p class="notice" role="note">No recent state polling; this projection uses the national environment, adjusted for the state's demographic mix.</p>
   {/if}
 </header>
 

@@ -1,0 +1,10 @@
+poll_id,geography,group_dim,group_value,n_group,dside_pct,rside_pct,source_url,field_end,n_estimated,note
+activote_2026-10-30,national,age,18-29,560,66,34,https://www.activote.net/polls/generic-ballot/2026-10-30/,2026-10-30,true,"ActiVote app-panel likely voters n=2000; n = 2000 x unweighted sample share 0.28; LOW QUALITY, two-way forced choice"
+activote_2026-10-30,national,age,30-44,820,59,41,https://www.activote.net/polls/generic-ballot/2026-10-30/,2026-10-30,true,"ActiVote bin is 30-49 (mapped to 30-44 label; approximation); n = 2000 x 0.41"
+activote_2026-10-30,national,age,45-64,420,49,51,https://www.activote.net/polls/generic-ballot/2026-10-30/,2026-10-30,true,"ActiVote bin is 50-64 (mapped to 45-64; approximation); n = 2000 x 0.21"
+activote_2026-10-30,national,age,65+,220,48,52,https://www.activote.net/polls/generic-ballot/2026-10-30/,2026-10-30,true,"n = 2000 x 0.11"
+activote_2026-10-30,national,race,black,140,74,26,https://www.activote.net/polls/generic-ballot/2026-10-30/,2026-10-30,true,"n = 2000 x 0.07"
+activote_2026-10-30,national,race,hispanic,160,54,46,https://www.activote.net/polls/generic-ballot/2026-10-30/,2026-10-30,true,"ActiVote label Latino; n = 2000 x 0.08"
+activote_2026-10-30,national,area,urban,500,63,37,https://www.activote.net/polls/generic-ballot/2026-10-30/,2026-10-30,true,"n = 2000 x 0.25"
+activote_2026-10-30,national,area,suburban,700,54,46,https://www.activote.net/polls/generic-ballot/2026-10-30/,2026-10-30,true,"n = 2000 x 0.35"
+activote_2026-10-30,national,area,rural,800,44,56,https://www.activote.net/polls/generic-ballot/2026-10-30/,2026-10-30,true,"n = 2000 x 0.40"

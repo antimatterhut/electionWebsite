@@ -64,4 +64,7 @@ diff:
 publish:
 	$(PY) -m senate.cli run --stage publish --prev $(PREV) --dest site/static/data
 
-update: fetch model county earlyvote turnout sim export overlay
+# `ei` is cached by input hash (a no-change rerun is seconds; changed inputs re-sample, ~10 min with county_eps off).
+# `crosstab` must precede `county`: it writes group_swing.parquet, gradients.json and area_swing.json that county reads.
+# `model` runs twice: summary.json embeds the turnout and early-vote components, which are refreshed after the first run.
+update: fetch model ei crosstab county earlyvote turnout model sim export overlay

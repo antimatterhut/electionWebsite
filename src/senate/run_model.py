@@ -54,9 +54,16 @@ def run_model(cfg: Settings | None = None, as_of: date | None = None, write: boo
     npv = base.national_margin(load_baseline(cfg.baseline.year))
     rcv = set(races.state_po[races.rcv.str.lower() == "true"])
     contests = {s: s for s in races.state_po}
+    inc = {r.state_po: {"D": 1, "R": -1}.get(r.incumbent_party, 0) for r in races.itertuples()}
     agg, n_agg = aggregator_median()
+    demo = None
+    if cfg.swing.demographic_prior.enabled:
+        from .swing import demographic
+        dp = demographic.build(cfg, write=write)
+        demo = dp.set_index("state_po").D.to_dict() if dp is not None else None
     try:
-        out = run_state_model(generic, senate, bl, npv, as_of, cfg, ratings, contests=contests, rcv_states=rcv)
+        out = run_state_model(generic, senate, bl, npv, as_of, cfg, ratings, contests=contests, rcv_states=rcv,
+                              incumbent_sign=inc, demo_dev=demo)
     except ValueError:
         # No usable raw generic-ballot polls (the Wikipedia raw-poll source is unavailable, see data dictionary):
         # fall back to the median of the hand-entered aggregator headlines and say so in the output.
@@ -64,7 +71,7 @@ def run_model(cfg: Settings | None = None, as_of: date | None = None, write: boo
             raise
         log.warning("warning", code="GB_AGGREGATOR_FALLBACK", median=round(agg, 2), n_aggregators=n_agg)
         out = run_state_model(generic, senate, bl, npv, as_of, cfg, ratings, contests=contests, rcv_states=rcv,
-                              gb_override=agg)
+                              gb_override=agg, incumbent_sign=inc, demo_dev=demo)
         out["national"]["gb_source"] = "aggregator_median_fallback"
         out["national"]["gb_n_polls"] = n_agg
     nat = out["national"]

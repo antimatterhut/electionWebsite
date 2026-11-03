@@ -46,8 +46,24 @@ class SwingState(_M):
     min_n_eff: float
 
 
+class SwingPrecision(_M):
+    sigma_prior: float
+    sigma_bias: float
+    w_min: float
+    w_max: float
+
+
+class DemographicPrior(_M):
+    enabled: bool = False
+    kappa: float = 1.0  # multiplier on D_s (state demographic deviation from national group swings)
+
+
 class Swing(_M):
-    weights: SwingWeights
+    combine: str  # precision | fixed
+    weights: SwingWeights  # used only when combine == "fixed"
+    precision: SwingPrecision
+    incumbent_pts: float
+    demographic_prior: DemographicPrior = DemographicPrior()
     market: Market
     scale_by_poll_volume: bool
     n_ref: float
@@ -119,14 +135,23 @@ class EiSampler(Sampler):
     seed: int
 
 
+class TauPriorSd(_M):
+    group: float
+    region: float
+
+
 class Crosstab(_M):
     min_n: int
     deff: float
+    baseline_sd_floor_logit: float
+    tau_prior_sd: TauPriorSd
     sampler: Sampler
 
 
 class Ei(_M):
     groups: list[str]
+    rake_to_validated: bool = False  # rake EI group baselines to validated-voter contrasts (ei/rake.py)
+    county_eps: bool
     sampler: EiSampler
     rhat_max: float
     ess_min: float
@@ -178,8 +203,15 @@ class Sim(_M):
     chunk: int
 
 
+class OverlapShrink(_M):
+    age: float
+    urban: float
+
+
 class County(_M):
     max_tilt: float
+    overlap_shrink: OverlapShrink
+    ei_kappa: float = 0.0  # exponent on the EI theta(1-theta) elasticity of group swings (0 = off)
 
 
 class Geo(_M):

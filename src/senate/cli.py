@@ -69,7 +69,13 @@ def main(argv: list[str] | None = None) -> int:
     if args.stage == "county-backtest":
         from .county.backtest import run_county_backtest
 
-        print(run_county_backtest())
+        from .county.backtest import run_group_county_backtest
+
+        print(run_group_county_backtest())  # true 2020->2024 group swings (needs no shift-EI)
+        try:
+            print(run_county_backtest())  # shift-EI pattern, in-sample (needs ei_shift_2024.parquet)
+        except FileNotFoundError as e:
+            log.warning("county_backtest_shift_skipped", error=str(e)[:120])
         return 0
     if args.stage == "earlyvote":
         from .earlyvote.run_earlyvote import run_earlyvote

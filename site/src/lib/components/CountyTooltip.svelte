@@ -9,9 +9,17 @@
     pinned?: boolean;
     onclose?: () => void;
     containerWidth?: number;
+    containerHeight?: number;
   }
-  let { content, x = 0, y = 0, pinned = false, onclose, containerWidth = 600 }: Props = $props();
+  let { content, x = 0, y = 0, pinned = false, onclose, containerWidth = 600, containerHeight = 400 }: Props = $props();
   const left = $derived(Math.min(Math.max(8, x + 14), Math.max(8, containerWidth - 300)));
+  // Measured tooltip height; place below the cursor if it fits, else above, and always clamp inside the map.
+  let tipH = $state(180);
+  const top = $derived.by(() => {
+    const below = y + 14;
+    const desired = below + tipH <= containerHeight - 4 ? below : y - 14 - tipH;
+    return Math.max(4, Math.min(desired, containerHeight - tipH - 4));
+  });
 </script>
 
 {#if content}
@@ -21,7 +29,8 @@
     role={pinned ? 'dialog' : 'tooltip'}
     aria-label={pinned ? content.title : undefined}
     style:left={pinned ? undefined : `${left}px`}
-    style:top={pinned ? undefined : `${y + 14}px`}
+    style:top={pinned ? undefined : `${top}px`}
+    bind:clientHeight={tipH}
   >
     <h3>{content.title}</h3>
     <dl>

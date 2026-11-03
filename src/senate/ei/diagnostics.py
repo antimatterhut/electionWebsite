@@ -31,7 +31,7 @@ def diagnose(idata, var_names: list[str] | None = None) -> Diag:
     import arviz as az
 
     post = idata.posterior.to_dataset()
-    names = var_names or list(post.data_vars)
+    names = [v for v in (var_names or list(post.data_vars)) if v in post.data_vars]
     sub = post[names]
     rhat = _flat(az.rhat(sub))
     ess_b = _flat(az.ess(sub, method="bulk"))

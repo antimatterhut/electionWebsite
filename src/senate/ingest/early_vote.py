@@ -90,13 +90,19 @@ class StateAdapter:
     mode_default = "mail"
 
     def fetch(self, fetcher: Fetcher, cycle: int) -> bytes:
-        return fetcher.get(self.url.format(cycle=cycle, ymd=ELECTION_DAY[cycle].strftime("%Y%m%d")),
+        e = ELECTION_DAY[cycle]
+        return fetcher.get(self.url.format(cycle=cycle, ymd=e.strftime("%Y%m%d"), y=e.strftime("%Y"), m=e.strftime("%m"),
+                                           d=e.strftime("%d")),
                            f"early_vote_{self.state_po}")
 
     def parse(self, raw: bytes | pd.DataFrame, cycle: int) -> pd.DataFrame:
         import io
-        df = raw if isinstance(raw, pd.DataFrame) else pd.read_csv(io.BytesIO(raw), dtype=str, sep=None,
-                                                                    engine="python", encoding="latin-1")
+        if isinstance(raw, pd.DataFrame):
+            df = raw
+        elif raw[:2] == b"PK":  # zipped single CSV (NC)
+            df = pd.read_csv(io.BytesIO(raw), dtype=str, compression="zip", encoding="latin-1")
+        else:
+            df = pd.read_csv(io.BytesIO(raw), dtype=str, sep=None, engine="python", encoding="latin-1")
         df.columns = [c.strip().lower() for c in df.columns]
         miss = [v for k, v in self.colmap.items() if k in ("date", "party") and v not in df]
         if miss:
@@ -109,18 +115,24 @@ class StateAdapter:
         out["mode"] = df[c["mode"]].map(self.mode_map).fillna(self.mode_default) if c.get("mode") in df else self.mode_default
         if c.get("geoid") in df:
             out["geoid"] = df[c["geoid"]].astype(str).str.zfill(5)
+        if c.get("status") in df:  # only accepted ballots count (spoiled/cancelled/pending rows carry return dates too)
+            out = out[df[c["status"]].astype(str).str.upper().str.startswith("ACCEPT").to_numpy()]
         out = out.dropna(subset=["date"])
+        # final pre-election totals: nothing from election day itself (days_out >= 1), and no typo'd future dates
+        out = out[out.date <= pd.Timestamp(ELECTION_DAY[cycle]) - pd.Timedelta(days=1)]
         if out.empty:
             raise ValueError(f"{self.state_po}: no returned ballots parsed")
-        return cumulate(out, self.state_po, cycle)
+        cum = cumulate(out, self.state_po, cycle)
+        return cum[cum.days_out >= 1].reset_index(drop=True)  # final pre-election totals only
 
     mode_map: dict[str, str] = {}
 
 
 class NC(StateAdapter):
     state_po = "NC"
-    url = "https://s3.amazonaws.com/dl.ncsbe.gov/ENRS/{ymd}/absentee_{ymd}.zip"  # UNVERIFIED path
-    colmap = {"date": "ballot_rtn_dt", "party": "voter_party_code", "age": "age", "race": "race"}
+    url = "https://s3.amazonaws.com/dl.ncsbe.gov/ENRS/{y}_{m}_{d}/absentee_{ymd}.zip"  # verified 2026-11-03 (200 for 2022/24/26)
+    colmap = {"date": "ballot_rtn_dt", "party": "voter_party_code", "age": "age", "race": "race",
+              "status": "ballot_rtn_status"}
 
 
 class GA(StateAdapter):

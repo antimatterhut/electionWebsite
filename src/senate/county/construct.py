@@ -32,45 +32,100 @@ def regional_weights(omega: pd.DataFrame, region: pd.Series) -> pd.DataFrame:
     return r.div(r.sum(axis=1), axis=0)
 
 
-def county_raw_swing(S_s: float, omega: pd.DataFrame, region: pd.Series, delta: pd.DataFrame,
-                     reg_w: pd.DataFrame, z_age: pd.Series | None = None, beta_age: float = 0.0,
-                     max_tilt: float = 6.0) -> pd.DataFrame:
-    """s_raw_i = S_s + sum_g w_ig (delta_{g,r(i)} - dbar_r(i)) + beta_age z_age_i; |tilt| capped at max_tilt.
+def ei_elasticity(theta: pd.DataFrame, omega: pd.DataFrame, state_of: pd.Series, kappa: float,
+                  clip: tuple[float, float] = (0.25, 4.0)) -> pd.DataFrame:
+    """County x group scale e_ig = (v_ig / vbar_{s,g})^kappa, v = theta(1-theta) (logit-uniform-swing sensitivity).
 
-    omega: county x group expected votes; delta: region x group group-swing means; reg_w: region x group weights.
-    Counties in a region without a delta row get delta equal to the regional mean (zero tilt).
+    A group's regional swing delta_{g,r} is multiplied by e_ig, so a group that is lopsided in a county (theta near 0
+    or 1) moves less there than where it is split. vbar is the omega-weighted state mean of v for the group, so the
+    state-level scale stays near 1. kappa=0 gives all ones (no EI effect); the ratio is clipped to `clip` before
+    the power. theta: county x group EI posterior means. Missing theta -> 1.
     """
+    th = theta.reindex(index=omega.index, columns=omega.columns)
+    v = th * (1.0 - th)
+    st = state_of.reindex(omega.index).to_numpy()
+    num = (v * omega).groupby(st).sum(min_count=1)
+    den = omega.where(v.notna()).groupby(st).sum(min_count=1)
+    ref = (num / den).reindex(st).set_axis(omega.index)
+    e = (v / ref).clip(*clip) ** kappa
+    return e.fillna(1.0)
+
+
+def county_raw_swing(S_s: float, omega: pd.DataFrame, region: pd.Series, delta: pd.DataFrame,
+                     z_age: pd.Series | None = None, beta_age: float = 0.0,
+                     max_tilt: float | None = 6.0, urban_term: pd.Series | None = None,
+                     overlap_shrink: tuple[float, float] = (1.0, 1.0),
+                     ei_scale: pd.DataFrame | None = None) -> pd.DataFrame:
+    """s_raw_i = S_s + clip(tilt_i + k_age beta_age z_age_i + k_urban urban_i, +-max_tilt).
+
+    tilt_i = raw_i - sum_j nu_j raw_j with raw_i = sum_g share_ig delta_{g,r(i)}: centered once at the STATE level
+    (nu = omega weights), so differences in level between regions of one state are kept (calibrate() fixes the mean).
+    omega: county x group expected votes; delta: region x group group-swing means. max_tilt=None means no cap.
+    overlap_shrink = (k_age, k_urban) discounts the age/urban terms because crosstab swings are marginal (part of
+    "young voters swung left" is already in the race x education mix). The group tilt alone is capped at max_tilt as
+    well as the total (cap applied after centering). Counties in a region without a delta row get the state-mean raw
+    swing (zero tilt).
+    ei_scale (county x group, from ei_elasticity) multiplies each group's delta per county, so EI's county-level
+    group vote shares make the group swings county-specific; None = 1.
+    """
+    cap = np.inf if max_tilt is None else max_tilt
     g = list(omega.columns)
+    tot = omega.sum(axis=1).to_numpy()
     share = omega.div(omega.sum(axis=1), axis=0)
-    reg = region.reindex(omega.index)
     dl = delta.reindex(columns=g)
-    dbar = (reg_w.reindex(columns=g).reindex(dl.index) * dl).sum(axis=1)
-    dev = dl.sub(dbar, axis=0)  # region x group, mean-zero at regional weights
-    dev_c = dev.reindex(reg.to_numpy()).to_numpy()  # county x group, NaN where region missing
-    dev_c = np.nan_to_num(dev_c, nan=0.0)
-    tilt = (share.to_numpy() * dev_c).sum(axis=1)
-    tilt = np.clip(tilt, -max_tilt, max_tilt)
-    age = np.zeros(len(omega)) if z_age is None else beta_age * z_age.reindex(omega.index).fillna(0.0).to_numpy()
-    out = pd.DataFrame({"tilt": tilt, "age_term": age}, index=omega.index)
-    out["s_raw"] = S_s + out.tilt + out.age_term
+    dc = dl.reindex(region.reindex(omega.index).to_numpy()).to_numpy()  # county x group, NaN where region missing
+    if ei_scale is not None:
+        dc = dc * ei_scale.reindex(index=omega.index, columns=g).fillna(1.0).to_numpy()
+    raw = (share.to_numpy() * dc).sum(axis=1)
+    ok = ~np.isnan(dc).any(axis=1)
+    if ok.any():
+        nu = tot[ok] / tot[ok].sum()
+        mean = float((nu * raw[ok]).sum())
+        tilt = np.where(ok, raw - mean, 0.0)
+    else:
+        tilt = np.zeros(len(omega))
+    tilt = np.clip(tilt, -cap, cap)
+    age = np.zeros(len(omega)) if z_age is None else (
+        overlap_shrink[0] * beta_age * z_age.reindex(omega.index).fillna(0.0).to_numpy())
+    urb = np.zeros(len(omega)) if urban_term is None else (
+        overlap_shrink[1] * urban_term.reindex(omega.index).fillna(0.0).to_numpy())
+    out = pd.DataFrame({"tilt": tilt, "age_term": age, "urban_term": urb}, index=omega.index)
+    out["s_raw"] = S_s + np.clip(out.tilt + out.age_term + out.urban_term, -cap, cap)
     return out
 
 
+def method_label(raw: pd.DataFrame) -> str:
+    """group_tilt, plus +age / +urban when those terms are nonzero."""
+    m = "group_tilt"
+    if raw.age_term.abs().max() > 0:
+        m += "+age"
+    if "urban_term" in raw and raw.urban_term.abs().max() > 0:
+        m += "+urban"
+    return m
+
+
 def build_state(state_po: str, S_s: float, counties: pd.DataFrame, omega: pd.DataFrame, delta: pd.DataFrame | None,
-                reg_w: pd.DataFrame | None, ei_status: str, z_age: pd.Series | None = None, beta_age: float = 0.0,
-                max_tilt: float = 6.0) -> pd.DataFrame:
+                ei_status: str, z_age: pd.Series | None = None, beta_age: float = 0.0,
+                max_tilt: float | None = 6.0, urban_term: pd.Series | None = None,
+                overlap_shrink: tuple[float, float] = (1.0, 1.0),
+                ei_scale: pd.DataFrame | None = None) -> pd.DataFrame:
     """Calibrated county swings for one state.
 
-    counties: index geoid, columns m0, region. Returns geoid, m0, tilt, age_term, s_raw, s, lam, county_method, m_hat.
+    The group tilt needs only the county group mix (omega, from CVAP x relative turnout) and the group swing deltas,
+    not EI's theta, so it applies whenever deltas exist, whatever `ei_status` says (kept as an argument for callers).
+    counties: index geoid, columns m0, region. Returns geoid, m0, tilt, age_term, urban_term, s_raw, s, lam,
+    county_method, m_hat.
     """
-    counties = counties.reindex(omega.index) if delta is not None and ei_status in EI_OK else counties
-    if delta is not None and reg_w is not None and ei_status in EI_OK:
-        raw = county_raw_swing(S_s, omega, counties.region, delta, reg_w, z_age, beta_age, max_tilt)
-        method = "ei_crosstab"
+    if delta is not None:
+        counties = counties.reindex(omega.index)
+        raw = county_raw_swing(S_s, omega, counties.region, delta, z_age, beta_age, max_tilt, urban_term,
+                               overlap_shrink, ei_scale)
+        method = method_label(raw)
     else:
         idx = counties.index
-        age = np.zeros(len(idx)) if z_age is None or beta_age == 0 else beta_age * z_age.reindex(idx).fillna(0).to_numpy()
-        raw = pd.DataFrame({"tilt": 0.0, "age_term": age}, index=idx)
+        age = np.zeros(len(idx)) if z_age is None or beta_age == 0 else (
+            overlap_shrink[0] * beta_age * z_age.reindex(idx).fillna(0).to_numpy())
+        raw = pd.DataFrame({"tilt": 0.0, "age_term": age, "urban_term": 0.0}, index=idx)
         raw["s_raw"] = S_s + raw.age_term
         method = "age_only" if z_age is not None and beta_age != 0 else "uniform"
         omega = omega.reindex(idx)

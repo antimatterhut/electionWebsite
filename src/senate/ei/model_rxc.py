@@ -24,6 +24,7 @@ class EIData:
     covariates: list[str] = field(default_factory=list)
     state_idx: np.ndarray | None = None  # (I,) int, set when states are pooled
     states: list[str] = field(default_factory=list)
+    county_eps: bool = True      # include the county x group effect eps_ig
 
     @property
     def pooled(self) -> bool:
@@ -51,7 +52,7 @@ def build_model(d: EIData):
         mu = pm.Normal("mu", mu=logit(d.mu_prior), sigma=d.sd_prior, dims="group")
         beta = pm.Normal("beta", 0.0, 0.5, dims=("group", "cov")) if J else None
         tau_u = pm.HalfNormal("tau_u", 0.5)
-        tau_e = pm.HalfNormal("tau_e", 0.5)
+        tau_e = pm.HalfNormal("tau_e", 0.5) if d.county_eps else None
         u = pm.Normal("u_raw", 0.0, 1.0, dims=("region", "group")) * tau_u
         eta = mu[None, :] + u[d.region_idx]
         if J:
@@ -60,15 +61,16 @@ def build_model(d: EIData):
             tau_s = pm.HalfNormal("tau_s", 0.5)
             s = pm.Normal("s_raw", 0.0, 1.0, shape=(len(d.states), G)) * tau_s
             eta = eta + s[d.state_idx]
-        eps = pm.Normal("eps_raw", 0.0, 1.0, dims=("county", "group")) * tau_e
-        theta = pm.Deterministic("theta", pm.math.sigmoid(eta + eps), dims=("county", "group"))
+        if d.county_eps:
+            eta = eta + pm.Normal("eps_raw", 0.0, 1.0, dims=("county", "group")) * tau_e
+        theta = pm.Deterministic("theta", pm.math.sigmoid(eta), dims=("county", "group"))
         phi = pm.HalfNormal("phi", 25.0)
         mean = (d.n * theta).sum(axis=1)
         pm.Normal("vd", mu=mean, sigma=pm.math.sqrt(phi * d.v), observed=d.vd, dims="county")
     return m
 
 
-SCALAR_VARS = ["mu", "tau_u", "tau_e", "phi"]
+SCALAR_VARS = ["mu", "tau_u", "tau_e", "phi"]  # tau_e absent when county_eps is off
 
 
 def sample(d: EIData, chains: int, tune: int, draws: int, target_accept: float, seed: int,

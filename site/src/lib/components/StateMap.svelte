@@ -24,6 +24,7 @@
   let pinned = $state<string | null>(null);
   let live = $state('');
   let width = $state(600);
+  let height = $state(400);
 
   const by = $derived(new Map(counties.map((c) => [c.geoid, c])));
   const sorted = $derived([...shapes].sort((a, b) => a.name.localeCompare(b.name)));
@@ -70,7 +71,7 @@
   };
 </script>
 
-<div class="statemap" bind:clientWidth={width}>
+<div class="statemap" bind:clientWidth={width} bind:clientHeight={height}>
   <svg bind:this={svg} {viewBox} role="group" aria-label="County map for {abbr}. Use arrow keys to move between counties; the county table below has the same data." onpointerleave={() => (hover = null)}>
     <g bind:this={g}>
       {#each sorted as s, i (s.geoid)}
@@ -92,7 +93,7 @@
   </svg>
   {#if status === 'loading'}<div class="overlay"><span class="skeleton" style="width: 60%; height: 60%"></span></div>{/if}
   {#if status === 'error'}<div class="overlay" role="alert">County map unavailable. The table below has all values.</div>{/if}
-  {#if hover && !pinned}<CountyTooltip content={tipFor(hover.geoid)} x={hover.x} y={hover.y} containerWidth={width} />{/if}
+  {#if hover && !pinned}<CountyTooltip content={tipFor(hover.geoid)} x={hover.x} y={hover.y} containerWidth={width} containerHeight={height} />{/if}
   {#if pinned}<CountyTooltip content={tipFor(pinned)} pinned onclose={() => (pinned = null)} />{/if}
   <p class="sr-only" aria-live="polite">{live}</p>
 </div>

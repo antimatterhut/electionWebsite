@@ -15,6 +15,6 @@ def ingest_validated_voter() -> pd.DataFrame:
     missing = [c for c in COLUMNS if c not in df]
     if missing:
         raise ValueError(f"validated_voter_priors.csv missing columns: {missing}")
-    df = stamp(df[COLUMNS], "manual:validated_voter_priors.csv", "manual", "manual")
+    df = stamp(df[COLUMNS + [c for c in ("source_url", "note") if c in df]], "manual:validated_voter_priors.csv", "manual", "manual")
     write_parquet(df, processed_dir() / "validated_voter_priors.parquet")
     return df

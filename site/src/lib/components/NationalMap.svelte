@@ -186,7 +186,7 @@
     </div>
   {/if}
   {#if hover && !pinned}
-    <CountyTooltip content={tipFor(hover.shape)} x={hover.x} y={hover.y} containerWidth={size.w} />
+    <CountyTooltip content={tipFor(hover.shape)} x={hover.x} y={hover.y} containerWidth={size.w} containerHeight={size.h} />
   {/if}
   {#if pinned}
     <CountyTooltip content={tipFor(pinned.shape)} pinned onclose={() => { pinned = null; draw(); }} />

@@ -21,7 +21,10 @@ DATA = ROOT / "data" / "manual" / "backtest"
 OUT = ROOT / "output" / "backtest"
 CYCLES = {2018: {"baseline_year": 2016, "election_day": date(2018, 11, 6)},
           2022: {"baseline_year": 2020, "election_day": date(2022, 11, 8)}}
-SENSITIVITY = [("1:1", (1.0, 1.0)), ("2:1 (default)", (2.0, 1.0)), ("3:1", (3.0, 1.0))]
+# (label, fixed (national, poll) weights or None for the configured combine mode). The precision row uses cfg as given.
+SENSITIVITY = [("fixed 2:1 (old default)", (2.0, 1.0)), ("fixed 60:40", (0.6, 0.4)), ("precision (default)", None)]
+GRID_SIGMA_PRIOR = (3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 10.0)
+GRID_SIGMA_BIAS = (0.0, 1.0, 1.5, 2.0, 2.5, 3.0, 4.0)
 THRESH_STATE_RMSE, AIM_STATE_RMSE, BIAS_MAX = 5.0, 4.0, 1.5
 SPECIAL_SUFFIX = "-S"  # contest key for special elections, e.g. 'MN-S'; its baseline is the state's
 
@@ -44,6 +47,21 @@ def load_cycle(cycle: int, data_dir: Path = DATA) -> dict:
     return {"senate": senate, "generic": generic, "truth": truth, "pres": pres, "ratings": ratings}
 
 
+def incumbent_signs(truth: pd.DataFrame) -> dict[str, int]:
+    """+1 where the D-side candidate is the incumbent, -1 for the R side (names carry an '(incumbent)' tag)."""
+    d = truth.dside_name.str.contains("incumbent", case=False, na=False)
+    r = truth.rside_name.str.contains("incumbent", case=False, na=False)
+    return dict(zip(truth.contest, d.astype(int) - r.astype(int)))
+
+
+def with_precision(cfg: Settings, **kw) -> Settings:
+    """cfg copy with swing.precision / swing.incumbent_pts / swing.combine overridden (for grid searches)."""
+    sw = cfg.swing
+    upd = {k: kw.pop(k) for k in ("combine", "incumbent_pts") if k in kw}
+    prec = sw.precision.model_copy(update=kw)
+    return cfg.model_copy(update={"swing": sw.model_copy(update={**upd, "precision": prec})})
+
+
 def run_cycle(cycle: int, cfg: Settings, days_before: int | None = None, weights: tuple[float, float] | None = None,
               data: dict | None = None) -> tuple[pd.DataFrame, dict]:
     """One as-of run. Returns (per-race frame with errors, national dict)."""
@@ -55,7 +73,7 @@ def run_cycle(cycle: int, cfg: Settings, days_before: int | None = None, weights
     truth = d["truth"]
     contests = dict(zip(truth.contest, truth.state_po))
     out = run_state_model(d["generic"], d["senate"], bl, npv, as_of, cfg, d["ratings"], contests=contests,
-                          weights=weights)
+                          weights=weights, incumbent_sign=incumbent_signs(truth))
     df = out["states"].merge(truth[["contest", "actual_margin", "dside_name", "rside_name"]], on="contest")
     df["naive_margin"] = df.m0 + out["national"]["s_nat"]
     df["error"] = df.proj_margin - df.actual_margin
@@ -77,7 +95,7 @@ def run_backtest(cfg: Settings | None = None, out_dir: Path = OUT, data_dir: Pat
                                     "polled_share": float(df.polled.mean()), "frame": df,
                                     "sim": SB.run_cycle_sim(df, cycle, cfg)}
         for label, w in SENSITIVITY:
-            sdf, _ = run_cycle(cycle, cfg, weights=w, data=data)
+            sdf, _ = run_cycle(cycle, cfg, weights=w, data=data)  # w None -> configured combine mode
             sm = M.state_metrics(sdf, sigma)
             sm["brier_sim"] = SB.run_cycle_sim(sdf, cycle, cfg)["brier"]
             results["sensitivity"].setdefault(label, {})[cycle] = sm
@@ -96,6 +114,27 @@ def run_backtest(cfg: Settings | None = None, out_dir: Path = OUT, data_dir: Pat
     return results
 
 
+def pooled_metrics(frames: list[pd.DataFrame]) -> dict:
+    err = pd.concat([f.error for f in frames]).to_numpy()
+    return {"rmse": M.rmse(err), "bias": M.bias(err), "n": int(len(err))}
+
+
+def grid_search(cfg: Settings | None = None, data_dir: Path = DATA, sigma_prior=GRID_SIGMA_PRIOR,
+                sigma_bias=GRID_SIGMA_BIAS, **fixed) -> pd.DataFrame:
+    """Pooled 2018+2022 state RMSE / bias for each (sigma_prior, sigma_bias) under precision weighting."""
+    cfg = cfg or load_config()
+    data = {c: load_cycle(c, data_dir) for c in CYCLES}
+    rows = []
+    for sp in sigma_prior:
+        for sb in sigma_bias:
+            c = with_precision(cfg, combine="precision", sigma_prior=sp, sigma_bias=sb, **fixed)
+            fr = [run_cycle(cy, c, data=data[cy])[0] for cy in CYCLES]
+            pm = pooled_metrics(fr)
+            rows.append({"sigma_prior": sp, "sigma_bias": sb, "rmse": pm["rmse"], "bias": pm["bias"],
+                         "abs_bias": abs(pm["bias"]), **{f"rmse_{cy}": M.rmse(f.error) for cy, f in zip(CYCLES, fr)}})
+    return pd.DataFrame(rows).sort_values(["rmse", "abs_bias"]).reset_index(drop=True)
+
+
 def gate(results: dict) -> dict:
     """Phase 2 DoD: the plan §7.4 rows that can be evaluated at state level."""
     checks = {}
@@ -112,14 +151,15 @@ def gate(results: dict) -> dict:
 
 
 def sensitivity_md(results: dict) -> str:
-    lines = ["| Weights (nat:state) | 2022 State RMSE | 2022 Brier | 2018 State RMSE | 2018 Brier |",
-             "|---|---|---|---|---|"]
+    lines = ["| Combination | 2022 RMSE | 2022 bias | 2022 Brier | 2018 RMSE | 2018 bias | 2018 Brier |",
+             "|---|---|---|---|---|---|---|"]
     for label, _ in SENSITIVITY:
         s = results["sensitivity"][label]
-        name = f"**{label}**" if "default" in label else label
-        lines.append(f"| {name} | {s[2022]['state_rmse']:.2f} | {s[2022]['brier_sim']:.3f} | "
-                     f"{s[2018]['state_rmse']:.2f} | {s[2018]['brier_sim']:.3f} |")
-    lines += ["", "Brier from the Phase 5 state-level simulation. Informational only; the default stays 2:1."]
+        name = f"**{label}**" if label.startswith("precision") else label
+        lines.append(f"| {name} | {s[2022]['state_rmse']:.2f} | {s[2022]['bias']:+.2f} | {s[2022]['brier_sim']:.3f} | "
+                     f"{s[2018]['state_rmse']:.2f} | {s[2018]['bias']:+.2f} | {s[2018]['brier_sim']:.3f} |")
+    lines += ["", "Brier from the Phase 5 state-level simulation. Precision row uses the configured sigma_prior/sigma_bias "
+              "(tuned by `grid_search` on the pooled 2018+2022 backtests)."]
     return "\n".join(lines) + "\n"
 
 

@@ -4,7 +4,11 @@ baseline:
   year: 2024
   office: president
 swing:
-  weights: {national: 2, state_poll: 1}
+  combine: precision            # precision | fixed
+  weights: {national: 2, state_poll: 1}   # used only when combine: fixed
+  precision: {sigma_prior: 4.0, sigma_bias: 1.0, w_min: 0.40, w_max: 0.90}   # tuned: grid search, pooled 2018+2022 backtests
+  incumbent_pts: 3.0            # signed toward the incumbent party; added to the prior mean (Task 1b; tuned on 2018+2022)
+  demographic_prior: {enabled: true, kappa: 1.0}  # prior += kappa * D_s, national group swings applied to the state's electorate (swing/demographic.py)
   market:
     enabled: true
     mu: 0.10
@@ -44,15 +48,19 @@ rcv: {transfer_to_dside: 0.50}
 crosstab:
   min_n: 75
   deff: 1.5
-  sampler: {chains: 4, tune: 1000, draws: 1000, target_accept: 0.9}
+  baseline_sd_floor_logit: 0.10  # floor on the spread of validated-voter 2024 baselines (logit scale)
+  tau_prior_sd: {group: 8.0, region: 3.0}  # HalfNormal scale of tau_a (group effect) / tau_b (group x region)
+  sampler: {chains: 4, tune: 1000, draws: 1000, target_accept: 0.97}
 ei:
   groups: [wnh_college, wnh_noncollege, black, hispanic, asian, other]
+  rake_to_validated: true
+  county_eps: false  # county x group random effect: off (poorly identified from one vote total per county; non-convergent)
   sampler: {chains: 4, tune: 1000, draws: 1000, target_accept: 0.92, seed: 20260}
   rhat_max: 1.01
   ess_min: 400
   retry_target_accept: 0.97
   min_counties_for_state_run: 25
-  pattern_persistence: 0.5
+  pattern_persistence: 0.0  # owner decision 2026-11-03: no 2020->24 group-pattern carryover into 2026
   workers: 8
   relative_turnout: {wnh_college: 1.00, wnh_noncollege: 0.88, black: 0.86, hispanic: 0.72, asian: 0.75, other: 0.75}
 earlyvote:
@@ -76,7 +84,7 @@ sim:
   interval: [0.10, 0.90]
   d_caucus_total: 47  # D + independents caucusing with D, 119th Congress; UNVERIFIED vs current roster (plan 6.12)
   chunk: 2000
-county: {max_tilt: 6.0}
+county: {max_tilt: 12.0, overlap_shrink: {age: 0.5, urban: 0.25}}  # discount age/urban terms (crosstab swings are marginal); urban tuned in county backtest, age untestable (no data)
 geo: {town_layer: false}
 http: {min_interval_s: 2.0, retries: 4, user_agent: "SenateCountyProjection/1.0 (+about-page-url; research project)"}
 validation: {ei_flag_pts: 8, ei_fail_pts: 12}

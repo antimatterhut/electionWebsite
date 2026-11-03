@@ -16,6 +16,8 @@ export interface Components {
   state_swing: number | null;
   turnout: number | null;
   early_vote: number | null;
+  /** kappa * D_s: the state's demographic deviation from the national swing (national group swings x its electorate) */
+  demographic?: number | null;
 }
 
 export interface Race {
@@ -35,7 +37,7 @@ export interface Race {
   p_dside_win?: number;
   swing_source: SwingSource;
   components: Components;
-  polls: { n: number; avg_margin: number | null; n_eff: number | null };
+  polls: { n: number; avg_margin: number | null; n_eff: number | null; w_poll?: number | null; poll_var?: number | null };
   ev_detail?: EvDetail;
   ei_status?: string;
   county_method?: string;
@@ -120,6 +122,8 @@ export interface DataHealth {
 
 export interface MethodologyParams {
   weights: { national: number; state_poll: number };
+  combine?: string;
+  precision?: { sigma_prior: number; sigma_bias: number; sigma_poll: number; w_min: number; w_max: number; incumbent_pts: number };
   half_life_days: { senate: number; generic: number };
   market: { enabled: boolean; mu: number; weight_cap: number };
   earlyvote: { cap_pts: number; shrink: number };

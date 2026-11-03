@@ -50,7 +50,7 @@ COUNTY_KEYS = {"geoid", "name", "pres2024_margin", "proj_margin", "shift", "inte
 STATE_FILE_KEYS = {"state", "run_id", "as_of", "counties", "groups", "early_vote", "polls_recent"}
 POLL_KEYS = {"pollster", "end", "n", "pop", "margin"}
 SENATE_KEYS = {"d_seats_median", "d_seats_p10", "d_seats_p90", "p_d_control", "distribution"}
-METHODOLOGY_KEYS = {"weights", "half_life_days", "market", "earlyvote", "county", "sim"}
+METHODOLOGY_KEYS = {"weights", "combine", "precision", "half_life_days", "market", "earlyvote", "county", "sim"}
 
 
 def _f(x, nd: int = 1):
@@ -164,6 +164,10 @@ def early_vote_block(row: pd.Series | None, detail: str) -> dict | None:
 def methodology_params(cfg: Settings) -> dict:
     return {
         "weights": {"national": cfg.swing.weights.national, "state_poll": cfg.swing.weights.state_poll},
+        "combine": cfg.swing.combine,
+        "precision": {"sigma_prior": cfg.swing.precision.sigma_prior, "sigma_bias": cfg.swing.precision.sigma_bias,
+                      "sigma_poll": cfg.polls.sigma_poll, "w_min": cfg.swing.precision.w_min,
+                      "w_max": cfg.swing.precision.w_max, "incumbent_pts": cfg.swing.incumbent_pts},
         "half_life_days": {"senate": cfg.polls.half_life_days.senate, "generic": cfg.polls.half_life_days.generic},
         "market": {"enabled": bool(cfg.swing.market.enabled), "mu": cfg.swing.market.mu,
                    "weight_cap": cfg.swing.market.weight_cap},
@@ -240,7 +244,8 @@ def export_site(cfg: Settings | None = None, out: Path = OUTPUT) -> dict:
     pres = pres[pres.year == 2024].drop_duplicates("geoid").set_index("geoid")
     ei = pd.read_parquet(proc / "ei_group_vote.parquet")
     ei["state_po"] = ei.geoid.map(geo.state_po)
-    ei_status = {s: ("fallback" if (g.ei_status == "fallback").mean() > 0.5 else "ok") for s, g in ei.groupby("state_po")}
+    ei_status = {s: ("fallback" if g.ei_status.isin(["fallback", "prior_reconciled"]).mean() > 0.5 else "ok")
+                 for s, g in ei.groupby("state_po")}
     n_g = ei.pivot_table(index="geoid", columns="group", values="n_group", aggfunc="first")
     shares = n_g.div(n_g.sum(axis=1).where(n_g.sum(axis=1) > 0), axis=0)
 
@@ -285,7 +290,7 @@ def export_site(cfg: Settings | None = None, out: Path = OUTPUT) -> dict:
     # data-health flags: what the reader should know about the inputs of this run
     n_ei = sum(v == "fallback" for v in ei_status.values())
     if n_ei:
-        flags.append(f"County group estimates fell back to uniform swing in {n_ei} of {len(ei_status)} states (EI did not converge).")
+        flags.append(f"County vote-by-group estimates (EI) did not converge in {n_ei} of {len(ei_status)} states; the group estimates there are prior-based, each county reconciled to its actual 2024 vote.")
     if summary["national"]["generic_ballot"].get("n_polls", 0) and "fallback" in str(summary["national"]["generic_ballot"].get("source")):
         flags.append("Generic ballot uses the aggregator-headline median, not raw polls.")
     if sim.get("rollup_excluded"):

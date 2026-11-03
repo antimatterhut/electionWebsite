@@ -11,7 +11,8 @@ from ..config import ROOT, Settings, load_config
 from ..ei import inputs as I
 from ..ei.groups import GROUPS
 from ..ingest._base import processed_dir, stamp, write_parquet
-from .construct import EI_OK, build_state, omega_groups, regional_weights
+from .construct import EI_OK, build_state, ei_elasticity, omega_groups
+from .urban import classify, urban_terms
 
 log = structlog.get_logger()
 OUTPUT = ROOT / "output"
@@ -48,6 +49,12 @@ def run_county(cfg: Settings | None = None, state_swing: pd.DataFrame | None = N
     grad_p = proc / "gradients.json"
     beta_age = float(json.loads(grad_p.read_text()).get("age_gradient_per_sd", 0.0)) if grad_p.exists() else 0.0
     z_age = _z_age(inp["age"], geo.index)
+    area_p = proc / "area_swing.json"
+    area = {k: v["delta"] for k, v in json.loads(area_p.read_text()).items()} if area_p.exists() else {}
+    nchs_p = ROOT / "data" / "manual" / "nchs_urcs_2023.csv"
+    classes, class_method = classify(geo.index, inp["cvap"].groupby("geoid").cvap.sum(),
+                                     pd.read_csv(nchs_p) if nchs_p.exists() else None)
+    ov = (cfg.county.overlap_shrink.age, cfg.county.overlap_shrink.urban)
 
     eig = ei.copy()
     eig["state_po"] = eig.geoid.map(geo.state_po)
@@ -57,12 +64,13 @@ def run_county(cfg: Settings | None = None, state_swing: pd.DataFrame | None = N
     if ev_p.exists():  # Phase 4: calibrate with the final weights (omega^EV), plan §6.8
         ev = pd.read_parquet(ev_p).pivot(index="geoid", columns="group", values="omega_ev")[GROUPS]
         omega = ev.combine_first(omega).reindex(omega.index)
-    reg_w = regional_weights(omega, geo.region)
+    theta = ei.pivot(index="geoid", columns="group", values="theta_mean").reindex(columns=GROUPS)
+    scale = ei_elasticity(theta, omega, geo.state_po, cfg.county.ei_kappa)
     delta = None
     if gs is not None:
         delta = gs.pivot(index="region", columns="group", values="delta_mean")[GROUPS]
     status = (ei.groupby(eig.state_po, observed=True).ei_status
-              .agg(lambda s: "fallback" if (s == "fallback").any() else "ok"))
+              .agg(lambda s: "fallback" if s.isin(["fallback", "prior_reconciled"]).any() else "ok"))
     parts = []
     for st in sorted(geo.state_po.unique()):
         if st not in ss.index:
@@ -72,8 +80,10 @@ def run_county(cfg: Settings | None = None, state_swing: pd.DataFrame | None = N
             log.warning("warning", code="NO_EI_COUNTIES", state=st)
             continue
         counties = pd.DataFrame({"m0": m0.reindex(ids), "region": geo.region.reindex(ids)})
-        parts.append(build_state(st, float(ss[st]), counties, omega.reindex(ids), delta, reg_w,
-                                 str(status.get(st, "fallback")), z_age, beta_age, cfg.county.max_tilt))
+        ut = (urban_terms(classes.reindex(ids), omega.reindex(ids).sum(axis=1), area) if area else None)
+        parts.append(build_state(st, float(ss[st]), counties, omega.reindex(ids), delta,
+                                 str(status.get(st, "fallback")), z_age, beta_age, cfg.county.max_tilt, ut, ov,
+                                 scale.reindex(ids)))
     out = pd.concat(parts, ignore_index=True)
     out["region"] = out.geoid.map(geo.region)
     if write:

@@ -6,8 +6,10 @@ import pandas as pd
 
 from ..config import Settings
 
-TAU_PRIOR_SD = 3.0  # HalfNormal(3.0) on tau_a, tau_b
-PRIOR_E_TAU2 = TAU_PRIOR_SD**2  # E[tau^2] of a HalfNormal(sigma) is sigma^2
+
+def prior_var(group_sd: float, region_sd: float) -> float:
+    """Prior Var(delta_{g,r}) = E[tau_a^2] + E[tau_b^2]; E[tau^2] of a HalfNormal(sigma) is sigma^2."""
+    return group_sd**2 + region_sd**2
 
 
 def cell_weights(cells: pd.DataFrame, region_weights: pd.DataFrame, regions: list[str],
@@ -30,9 +32,10 @@ def cell_weights(cells: pd.DataFrame, region_weights: pd.DataFrame, regions: lis
     return W
 
 
-def prior_only(groups: list[str], regions: list[str], pattern_g: pd.Series, s_ref: float, lam: float) -> pd.DataFrame:
+def prior_only(groups: list[str], regions: list[str], pattern_g: pd.Series, s_ref: float, lam: float,
+               tau_sd: tuple[float, float] = (3.0, 3.0)) -> pd.DataFrame:
     """No usable crosstab cells: delta = S_ref + lambda * pattern_g, prior SD, shrinkage 1 (plan §6.8 fallback)."""
-    sd = float(np.sqrt(2 * PRIOR_E_TAU2))
+    sd = float(np.sqrt(prior_var(*tau_sd)))
     rows = [{"region": r, "group": g, "delta_mean": s_ref + lam * float(pattern_g.get(g, 0.0)), "delta_sd": sd,
              "n_polls": 0, "shrinkage_factor": 1.0} for r in regions for g in groups]
     return pd.DataFrame(rows)
@@ -41,7 +44,7 @@ def prior_only(groups: list[str], regions: list[str], pattern_g: pd.Series, s_re
 def fit_group_swings(cells: pd.DataFrame, groups: list[str], regions: list[str], pattern_g: pd.Series, s_ref: float,
                      W: np.ndarray, cfg: Settings, state_offset: np.ndarray | None = None) -> pd.DataFrame:
     """z_k ~ N(sum_r W_kr delta_{g(k),r}, v_k); delta_{g,r} = S_ref + a_g + b_{g,r};
-    a_g ~ N(lambda p_g, tau_a^2), b_{g,r} ~ N(0, tau_b^2), tau ~ HalfNormal(3).
+    a_g ~ N(lambda p_g, tau_a^2), b_{g,r} ~ N(0, tau_b^2), tau ~ HalfNormal(crosstab.tau_prior_sd).
 
     cells: group, z, var (+poll_id). state_offset (cells,) converts state-poll cells to the national S_ref scale
     (S_s - S_nat). Returns region, group, delta_mean, delta_sd, n_polls, shrinkage_factor (= posterior / prior var).
@@ -49,8 +52,9 @@ def fit_group_swings(cells: pd.DataFrame, groups: list[str], regions: list[str],
     import pymc as pm
 
     lam = cfg.ei.pattern_persistence
+    tau_sd = (cfg.crosstab.tau_prior_sd.group, cfg.crosstab.tau_prior_sd.region)
     if cells.empty:
-        return prior_only(groups, regions, pattern_g, s_ref, lam)
+        return prior_only(groups, regions, pattern_g, s_ref, lam, tau_sd)
     gi = cells.group.map({g: i for i, g in enumerate(groups)}).to_numpy()
     z = cells.z.to_numpy(float) - (0.0 if state_offset is None else state_offset)
     v = cells["var"].to_numpy(float)
@@ -58,24 +62,27 @@ def fit_group_swings(cells: pd.DataFrame, groups: list[str], regions: list[str],
     pm_mean = np.array([lam * float(pattern_g.get(g, 0.0)) for g in groups])
     s = cfg.crosstab.sampler
     with pm.Model(coords={"group": groups, "region": regions}):
-        tau_a = pm.HalfNormal("tau_a", TAU_PRIOR_SD)
-        tau_b = pm.HalfNormal("tau_b", TAU_PRIOR_SD)
-        a = pm.Normal("a", pm_mean, tau_a, shape=G)
-        b = pm.Normal("b", 0.0, tau_b, shape=(G, R))
+        tau_a = pm.HalfNormal("tau_a", tau_sd[0])
+        tau_b = pm.HalfNormal("tau_b", tau_sd[1])
+        # non-centered: a = mean + tau_a * a_raw, b = tau_b * b_raw (avoids the tau funnel -> divergences)
+        a_raw = pm.Normal("a_raw", 0.0, 1.0, shape=G)
+        b_raw = pm.Normal("b_raw", 0.0, 1.0, shape=(G, R))
+        a = pm.Deterministic("a", pm_mean + tau_a * a_raw)
+        b = pm.Deterministic("b", tau_b * b_raw)
         delta = pm.Deterministic("delta", s_ref + a[:, None] + b, dims=("group", "region"))
         mean = (delta[gi] * W).sum(axis=1)
         pm.Normal("z", mean, np.sqrt(v), observed=z)
         idata = pm.sample(draws=s.draws, tune=s.tune, chains=s.chains, target_accept=s.target_accept,
                           random_seed=cfg.ei.sampler.seed, progressbar=False, cores=1)
     d = idata.posterior["delta"].stack(s=("chain", "draw")).transpose("group", "region", "s").values
-    prior_var = 2 * PRIOR_E_TAU2  # prior Var(delta_{g,r}) = E[tau_a^2] + E[tau_b^2] with tau ~ HalfNormal(3)
+    pvar = prior_var(*tau_sd)
     npolls = cells.groupby("group").poll_id.nunique()
     rows = []
     for gj, g in enumerate(groups):
         for ri, r in enumerate(regions):
             rows.append({"region": r, "group": g, "delta_mean": float(d[gj, ri].mean()),
                          "delta_sd": float(d[gj, ri].std(ddof=1)), "n_polls": int(npolls.get(g, 0)),
-                         "shrinkage_factor": float(d[gj, ri].var(ddof=1) / prior_var)})
+                         "shrinkage_factor": float(d[gj, ri].var(ddof=1) / pvar)})
     return pd.DataFrame(rows)
 
 

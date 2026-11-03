@@ -142,8 +142,7 @@ def test_group_shrinkage_toward_overall():
 
 
 def test_group_swing_prior_only_fallback():
-    cfg = load_config()
-    out = prior_only(GROUPS, ["south", "midwest"], pd.Series({"black": 2.0}), 9.0, cfg.ei.pattern_persistence)
+    out = prior_only(GROUPS, ["south", "midwest"], pd.Series({"black": 2.0}), 9.0, 0.5)  # lambda explicit: config is 0
     assert (out[out.group == "black"].delta_mean == 9.0 + 0.5 * 2.0).all()
     assert (out.n_polls == 0).all() and (out.shrinkage_factor == 1.0).all()
 
@@ -169,3 +168,56 @@ def test_ei_flags_threshold_and_hard_fail():
     assert fails == ["hispanic@national"]  # 13 > 12 and group >= 10% of voters
     empty, none = compare(ei, geo, None, cfg)
     assert empty.empty and none == []
+
+
+def test_harmonize_prefers_validated_baseline_and_records_source():
+    from senate.crosstab.harmonize import harmonize, validated_baseline
+
+    v = pd.DataFrame({"year": [2024, 2024], "geography": ["national"] * 2, "group_value": ["hispanic"] * 2,
+                      "group_dim": ["race"] * 2, "d_share_2p": [0.50, 0.56]})
+    b, sd = validated_baseline(v, "national", "hispanic", 0.10)
+    assert b == pytest.approx(100 * (2 * 0.53 - 1)) and sd == pytest.approx(200 * 0.03)
+    assert validated_baseline(v, "national", "black") is None
+    cx = pd.DataFrame([dict(poll_id="p", geography="national", group_dim="race", group_value="hispanic", n_group=400,
+                            dside_pct=51.0, rside_pct=24.0, margin_2p=0.0)])
+    base = {"national": pd.DataFrame({"geography": ["national"], "group": ["hispanic"], "b": [-40.0], "b_sd": [1.0]})}
+    gw = pd.DataFrame({"geography": ["national"], "group": ["hispanic"], "w": [1.0]})
+    cells, _ = harmonize(cx, base, gw, 1.5, validated=v)
+    assert cells.b_source.iloc[0] == "validated" and cells.b.iloc[0] == pytest.approx(6.0)
+    cells0, _ = harmonize(cx, base, gw, 1.5)
+    assert cells0.b_source.iloc[0] == "ei" and cells0.b.iloc[0] == -40.0
+
+
+def test_prior_fallback_is_reconciled_to_county_votes():
+    from senate.ei.model_rxc import EIData
+    from senate.ei.run_state import PRIOR_RECONCILED, _finish, prior_only as pr_only
+
+    rng = np.random.default_rng(3)
+    n = rng.uniform(500, 5000, (6, 3))
+    mu = np.array([0.8, 0.4, 0.55])
+    vd = (n * np.array([0.7, 0.35, 0.5])).sum(axis=1) * rng.uniform(0.9, 1.1, 6)
+    d = EIData(np.array([f"{i:05d}" for i in range(6)]), np.array(["GA"] * 6), vd, n.sum(axis=1), n, np.zeros((6, 0)),
+               np.zeros(6, int), ["r"], mu, np.full(3, 0.35), ["a", "b", "c"])
+    t = _finish(d, pr_only(d), PRIOR_RECONCILED, {}, reconciled=True)
+    pred = (t.theta_mean.to_numpy().reshape(6, 3) * n).sum(axis=1)
+    assert np.allclose(pred, vd, rtol=1e-4)
+    assert t.groupby("group").theta_mean.nunique().max() > 1  # counties now differ, unlike pure priors
+    assert (t.ei_status == PRIOR_RECONCILED).all()
+
+
+def test_group_swing_prior_sd_follows_config_tau():
+    from senate.crosstab.hier_model import prior_var
+
+    assert prior_var(8.0, 3.0) == pytest.approx(73.0)
+    out = prior_only(GROUPS, ["south"], pd.Series(dtype=float), 9.0, 0.0, tau_sd=(8.0, 3.0))
+    assert np.allclose(out.delta_sd, np.sqrt(73.0))
+
+
+def test_ei_baseline_sd_floor_is_rms_gap_to_validated():
+    from senate.crosstab.harmonize import ei_baseline_sd_floor
+    nat = pd.DataFrame({"group": ["black", "hispanic"], "b": [80.0, 10.0]})
+    val = pd.DataFrame({"year": [2024, 2024], "geography": ["national"] * 2, "group_dim": ["race"] * 2,
+                        "group_value": ["black", "hispanic"], "d_share_2p": [0.85, 0.5], "study": ["a", "a"]})
+    f = ei_baseline_sd_floor(nat, val)
+    assert abs(f - np.sqrt((10.0**2 + 10.0**2) / 2)) < 1e-6
+    assert ei_baseline_sd_floor(nat, None) == 0.0

@@ -1,1 +1,9 @@
-state_po,cycle,party,age_bin,race5,final_ballots
+state_po,cycle,party,age_bin,race5,final_ballots,source_url
+NC,2022,D,all,all,1283988,https://www.ncsbe.gov/results-data/voter-turnout/2022-general-election-turnout
+NC,2022,R,all,all,1303696,https://www.ncsbe.gov/results-data/voter-turnout/2022-general-election-turnout
+NC,2022,U,all,all,1183891,https://www.ncsbe.gov/results-data/voter-turnout/2022-general-election-turnout
+NC,2022,O,all,all,15329,https://www.ncsbe.gov/results-data/voter-turnout/2022-general-election-turnout
+NC,2024,D,all,all,1797064,https://www.ncsbe.gov/results-data/voter-turnout/2024-general-election-turnout
+NC,2024,R,all,all,1876744,https://www.ncsbe.gov/results-data/voter-turnout/2024-general-election-turnout
+NC,2024,U,all,all,1983669,https://www.ncsbe.gov/results-data/voter-turnout/2024-general-election-turnout
+NC,2024,O,all,all,48384,https://www.ncsbe.gov/results-data/voter-turnout/2024-general-election-turnout
