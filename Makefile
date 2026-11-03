@@ -1,7 +1,7 @@
 PY ?= python
 AS_OF ?=
 
-.PHONY: site site-test fetch model backtest test update ei crosstab county ei-validate county-backtest earlyvote earlyvote-backtest turnout sim
+.PHONY: site site-test fetch model backtest test update ei crosstab county ei-validate county-backtest earlyvote earlyvote-backtest turnout sim overlay diff publish
 fetch:
 	$(PY) -m senate.cli run --stage fetch $(if $(AS_OF),--as-of $(AS_OF),)
 
@@ -49,4 +49,15 @@ site:
 site-test:
 	cd site && npm run check && npm test && npm run cb && npm run size && npm run test:e2e
 
-update: fetch model
+# Results overlay, diff and publish (plan 8.4-8.6, Phase 7). PREV = previous-good published data dir.
+PREV ?= .published
+overlay:
+	$(PY) -m senate.cli run --stage overlay
+
+diff:
+	$(PY) -m senate.cli run --stage diff --prev $(PREV)
+
+publish:
+	$(PY) -m senate.cli run --stage publish --prev $(PREV) --dest site/static/data
+
+update: fetch model earlyvote turnout sim overlay

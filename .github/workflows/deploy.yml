@@ -1,0 +1,54 @@
+name: deploy
+# Builds the static site (plan 10.6) with the published data from the `data` branch and deploys to GitHub Pages.
+on:
+  push:
+    branches: [master]
+    paths: ["site/**", ".github/workflows/deploy.yml"]
+  workflow_call:
+  workflow_dispatch:
+concurrency:
+  group: pages
+  cancel-in-progress: false
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Published data
+        run: |
+          git ls-remote --exit-code --heads origin data >/dev/null || { echo "::error::no data branch yet; run the update workflow first"; exit 1; }
+          git fetch --depth 1 origin data
+          mkdir -p site/static/data
+          git archive FETCH_HEAD | tar -x -C site/static/data
+          if grep -Eq '"mock": *true' site/static/data/summary.json; then echo "::error::mock data, refusing to deploy"; exit 1; fi
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - run: npm ci
+        working-directory: site
+      - run: npm run build
+        working-directory: site
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}
+      - run: npm run size
+        working-directory: site
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site/build
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment:
+      name: github-pages
+      url: ${{ steps.d.outputs.page_url }}
+    steps:
+      - id: d
+        uses: actions/deploy-pages@v4

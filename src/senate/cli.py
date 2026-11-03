@@ -14,8 +14,10 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="senate")
     sub = ap.add_subparsers(dest="cmd", required=True)
     run = sub.add_parser("run")
-    run.add_argument("--stage", required=True, choices=["fetch", "model", "backtest", "ei", "crosstab", "county", "ei-validate", "county-backtest", "earlyvote", "earlyvote-backtest", "turnout", "sim"])
+    run.add_argument("--stage", required=True, choices=["fetch", "model", "backtest", "ei", "crosstab", "county", "ei-validate", "county-backtest", "earlyvote", "earlyvote-backtest", "turnout", "sim", "diff", "publish", "overlay"])
     run.add_argument("--as-of", default=None)
+    run.add_argument("--prev", default=None, help="previous published data dir (diff/publish)")
+    run.add_argument("--dest", default=None, help="published data dir (publish)")
     args = ap.parse_args(argv)
     structlog.configure(processors=[structlog.processors.add_log_level, structlog.processors.TimeStamper(fmt="iso"),
                                     structlog.dev.ConsoleRenderer()])
@@ -89,6 +91,34 @@ def main(argv: list[str] | None = None) -> int:
 
         out = run_sim()
         print(json.dumps(out["sim"]["seats"], indent=2))
+        return 0
+    if args.stage in ("diff", "publish", "overlay"):
+        from pathlib import Path
+
+        from .config import ROOT, load_config
+
+        cfg = load_config()
+        out = ROOT / "output"
+        prev = Path(args.prev) if args.prev else None
+        if args.stage == "overlay":
+            from .ingest.results_overlay import write_overlay
+
+            write_overlay(cfg, out)
+            return 0
+        if args.stage == "diff":
+            from .export.diff import diff_runs, write_diff
+
+            rep = diff_runs(prev if prev and prev.is_dir() else None, out, cfg)
+            write_diff(rep, out)
+            print(rep.markdown)
+            return 0
+        from .export.publish import PublishError, publish
+
+        try:
+            publish(out, prev, Path(args.dest or ROOT / "site" / "static" / "data"))
+        except PublishError as e:
+            log.error("publish_failed", detail=str(e))
+            return 1
         return 0
     return 2
 

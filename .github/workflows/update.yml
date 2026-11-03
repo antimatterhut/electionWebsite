@@ -1,0 +1,107 @@
+name: update
+# Unattended projection refresh (plan 8.5). A failure at any step leaves the `data` branch (previous-good) untouched.
+on:
+  schedule:
+    - cron: "0 */6 * * *"   # every 6 h
+    - cron: "30 * * * *"    # hourly; the gate below only lets it through from 2026-10-27 (final week)
+  workflow_dispatch:
+concurrency:
+  group: update
+  cancel-in-progress: false
+permissions:
+  contents: write
+  issues: write
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    outputs:
+      published: ${{ steps.push.outputs.published }}
+    steps:
+      - name: Gate hourly cron to final week
+        if: github.event.schedule == '30 * * * *'
+        run: |
+          if [ "$(date -u +%Y%m%d)" -lt 20261027 ]; then echo "skip=1" >> "$GITHUB_ENV"; fi
+      - uses: actions/checkout@v4
+        if: env.skip != '1'
+      - name: Previous-good data (data branch)
+        if: env.skip != '1'
+        run: |
+          mkdir .published
+          if git ls-remote --exit-code --heads origin data >/dev/null; then
+            git fetch --depth 1 origin data
+            git archive FETCH_HEAD | tar -x -C .published
+          fi
+      - uses: actions/setup-python@v5
+        if: env.skip != '1'
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - uses: actions/cache@v4
+        if: env.skip != '1'
+        with:
+          path: data/cache
+          key: datacache-${{ github.run_id }}
+          restore-keys: datacache-
+      - name: Install
+        if: env.skip != '1'
+        run: pip install -e ".[dev,geo]"
+      - name: Pipeline (fetch, model, early vote, turnout, simulation, overlay)
+        if: env.skip != '1'
+        env:
+          CENSUS_API_KEY: ${{ secrets.CENSUS_API_KEY }}
+        run: make update
+      - name: Tests (guard against a broken model)
+        if: env.skip != '1'
+        run: make test
+      - name: Diff vs previous-good
+        if: env.skip != '1'
+        run: |
+          make diff
+          cat output/diff.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Validate and stage (failure keeps previous-good live)
+        if: env.skip != '1'
+        run: make publish
+      - name: Push to data branch
+        id: push
+        if: env.skip != '1'
+        run: |
+          cp output/diff.md site/static/data/diff.md
+          cd site/static/data
+          git init -q -b data
+          git config user.name "senate-bot"
+          git config user.email "senate-bot@users.noreply.github.com"
+          git add -A
+          git commit -q -m "data: $(date -u +%FT%TZ)"
+          git push --force "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" data:data
+          echo "published=1" >> "$GITHUB_OUTPUT"
+      - name: Upload logs
+        if: always() && env.skip != '1'
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-${{ github.run_id }}
+          path: |
+            logs/
+            output/diff.md
+            output/data_health.json
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Alert on failure (open or update an issue)
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          gh label create update-failed --color B60205 2>/dev/null || true
+          n=$(gh issue list --label update-failed --state open --json number -q '.[0].number')
+          if [ -n "$n" ]; then gh issue comment "$n" --body "Still failing: $url"
+          else gh issue create --title "Scheduled update failed" --label update-failed --body "Previous-good data is still live. $url"; fi
+  deploy:
+    needs: update
+    if: needs.update.outputs.published == '1'
+    uses: ./.github/workflows/deploy.yml
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
