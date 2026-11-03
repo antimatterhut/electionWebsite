@@ -10,3 +10,4 @@ output/
 node_modules/
 .env
 data/processed/
+*.egg-info/
