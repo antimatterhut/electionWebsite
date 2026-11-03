@@ -1,5 +1,180 @@
 {
-  "run_id": "20261103T093826Z",
+  "run_id": "20261103T220516Z",
   "as_of": "2026-11-03",
-  "items": []
+  "items": [
+    {
+      "kind": "national",
+      "state": null,
+      "text": "National swing moved -1.5 pts",
+      "delta": -1.55
+    },
+    {
+      "kind": "margin",
+      "state": "AL",
+      "text": "AL: projected margin moved 1.5 pts toward Republicans",
+      "delta": -1.454
+    },
+    {
+      "kind": "p_win",
+      "state": "AK",
+      "text": "AK: projected margin moved 1.1 pts toward Democrats",
+      "delta": 0.109
+    },
+    {
+      "kind": "margin",
+      "state": "DE",
+      "text": "DE: projected margin moved 2.6 pts toward Republicans",
+      "delta": -2.633
+    },
+    {
+      "kind": "p_win",
+      "state": "FL",
+      "text": "FL: projected margin moved 3.7 pts toward Republicans",
+      "delta": -0.171
+    },
+    {
+      "kind": "margin",
+      "state": "ID",
+      "text": "ID: projected margin moved 4.1 pts toward Democrats",
+      "delta": 4.054
+    },
+    {
+      "kind": "margin",
+      "state": "IL",
+      "text": "IL: projected margin moved 3.2 pts toward Republicans",
+      "delta": -3.158
+    },
+    {
+      "kind": "p_win",
+      "state": "IA",
+      "text": "IA: projected margin moved 0.5 pts toward Democrats",
+      "delta": 0.053
+    },
+    {
+      "kind": "p_win",
+      "state": "KS",
+      "text": "KS: projected margin moved 3.5 pts toward Democrats",
+      "delta": 0.318
+    },
+    {
+      "kind": "margin",
+      "state": "KY",
+      "text": "KY: projected margin moved 3.9 pts toward Republicans",
+      "delta": -3.877
+    },
+    {
+      "kind": "p_win",
+      "state": "LA",
+      "text": "LA: projected margin moved 1.7 pts toward Democrats",
+      "delta": 0.056
+    },
+    {
+      "kind": "p_win",
+      "state": "ME",
+      "text": "ME: projected margin moved 9.2 pts toward Republicans",
+      "delta": -0.138
+    },
+    {
+      "kind": "margin",
+      "state": "MA",
+      "text": "MA: projected margin moved 3.5 pts toward Republicans",
+      "delta": -3.457
+    },
+    {
+      "kind": "p_win",
+      "state": "MI",
+      "text": "MI: projected margin moved 3.2 pts toward Republicans",
+      "delta": -0.076
+    },
+    {
+      "kind": "p_win",
+      "state": "MN",
+      "text": "MN: projected margin moved 5.8 pts toward Republicans",
+      "delta": -0.06
+    },
+    {
+      "kind": "margin",
+      "state": "MS",
+      "text": "MS: projected margin moved 2.2 pts toward Republicans",
+      "delta": -2.186
+    },
+    {
+      "kind": "margin",
+      "state": "MT",
+      "text": "MT: projected margin moved 3.2 pts toward Republicans",
+      "delta": -3.172
+    },
+    {
+      "kind": "p_win",
+      "state": "NE",
+      "text": "NE: projected margin moved 2.4 pts toward Democrats",
+      "delta": 0.105
+    },
+    {
+      "kind": "margin",
+      "state": "NH",
+      "text": "NH: projected margin moved 3.9 pts toward Republicans",
+      "delta": -3.946
+    },
+    {
+      "kind": "margin",
+      "state": "NM",
+      "text": "NM: projected margin moved 1.7 pts toward Democrats",
+      "delta": 1.701
+    },
+    {
+      "kind": "margin",
+      "state": "OK",
+      "text": "OK: projected margin moved 3.1 pts toward Republicans",
+      "delta": -3.114
+    },
+    {
+      "kind": "margin",
+      "state": "OR",
+      "text": "OR: projected margin moved 1.4 pts toward Republicans",
+      "delta": -1.42
+    },
+    {
+      "kind": "margin",
+      "state": "RI",
+      "text": "RI: projected margin moved 1.8 pts toward Republicans",
+      "delta": -1.823
+    },
+    {
+      "kind": "p_win",
+      "state": "SC",
+      "text": "SC: projected margin moved 2.9 pts toward Republicans",
+      "delta": -0.065
+    },
+    {
+      "kind": "margin",
+      "state": "SD",
+      "text": "SD: projected margin moved 1.8 pts toward Republicans",
+      "delta": -1.766
+    },
+    {
+      "kind": "margin",
+      "state": "TN",
+      "text": "TN: projected margin moved 3.3 pts toward Republicans",
+      "delta": -3.274
+    },
+    {
+      "kind": "p_win",
+      "state": "TX",
+      "text": "TX: projected margin moved 2.5 pts toward Democrats",
+      "delta": 0.24
+    },
+    {
+      "kind": "margin",
+      "state": "WV",
+      "text": "WV: projected margin moved 5.0 pts toward Republicans",
+      "delta": -5.035
+    },
+    {
+      "kind": "margin",
+      "state": "WY",
+      "text": "WY: projected margin moved 1.4 pts toward Republicans",
+      "delta": -1.437
+    }
+  ]
 }

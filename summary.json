@@ -1,5 +1,5 @@
 {
-  "run_id": "20261103T095603Z",
+  "run_id": "20261103T220516Z",
   "as_of": "2026-11-03",
   "model_version": "0.5.0-phase5",
   "phase": 5,
@@ -11,32 +11,32 @@
       "n_eff": 0.0,
       "se": null
     },
-    "npv2024": -3.236,
-    "s_nat": 12.594,
+    "npv2024": -1.686,
+    "s_nat": 11.045,
     "senate": {
       "d_seats_median": 52.0,
       "d_seats_p10": 49.0,
       "d_seats_p90": 55.0,
-      "p_d_control": 0.686,
+      "p_d_control": 0.759,
       "threshold": 51.0,
       "distribution": {
-        "44": 0.001,
-        "45": 0.001,
-        "46": 0.002,
-        "47": 0.005,
-        "48": 0.022,
-        "49": 0.127,
-        "50": 0.156,
-        "51": 0.174,
-        "52": 0.166,
-        "53": 0.135,
-        "54": 0.096,
-        "55": 0.06,
-        "56": 0.032,
-        "57": 0.014,
+        "43": 0.001,
+        "44": 0.002,
+        "45": 0.005,
+        "46": 0.01,
+        "47": 0.02,
+        "48": 0.037,
+        "49": 0.067,
+        "50": 0.097,
+        "51": 0.128,
+        "52": 0.156,
+        "53": 0.169,
+        "54": 0.164,
+        "55": 0.088,
+        "56": 0.035,
+        "57": 0.013,
         "58": 0.005,
-        "59": 0.003,
-        "60": 0.001
+        "59": 0.002
       }
     }
   },
@@ -62,32 +62,35 @@
       },
       "rcv": false,
       "pres2024_margin": -30.881,
-      "proj_margin": -19.244,
-      "shift": 12.435,
+      "proj_margin": -20.698,
+      "shift": 10.642,
       "swing_source": "combined",
       "components": {
-        "national": 12.594,
+        "national": 11.045,
         "state_poll": 12.118,
         "market": null,
         "market_weight": 0.0,
-        "state_swing": 12.435,
-        "turnout": -0.798,
+        "state_swing": 10.642,
+        "demographic": -2.319,
+        "turnout": -0.459,
         "early_vote": 0.0
       },
       "polls": {
         "n": 4,
         "avg_margin": -18.764,
-        "n_eff": 4.0
+        "n_eff": 4.0,
+        "w_poll": 0.769,
+        "poll_var": 4.803
       },
-      "p_dside_win": 0.0004,
+      "p_dside_win": 0.0002,
       "interval80": [
-        -25.049,
-        -13.384
+        -26.478,
+        -14.83
       ],
       "name": "Alabama",
       "ev_detail": "none",
-      "ei_status": "fallback",
-      "county_method": "uniform"
+      "ei_status": "ok",
+      "county_method": "group_tilt+urban"
     },
     {
       "state": "AK",
@@ -106,31 +109,35 @@
       },
       "rcv": true,
       "pres2024_margin": -13.693,
-      "proj_margin": -0.066,
-      "shift": 13.627,
+      "proj_margin": 0.994,
+      "shift": 14.531,
       "swing_source": "combined",
       "components": {
-        "national": 12.594,
-        "state_poll": 15.693,
+        "national": 11.045,
+        "state_poll": 15.672,
         "market": null,
         "market_weight": 0.0,
-        "state_swing": 13.627,
-        "turnout": 0.0,
+        "state_swing": 14.531,
+        "demographic": 0.0,
+        "turnout": 0.156,
         "early_vote": 0.0
       },
       "polls": {
         "n": 16,
-        "avg_margin": 2.0,
-        "n_eff": 8.392
+        "avg_margin": 1.978,
+        "n_eff": 8.392,
+        "w_poll": 0.851,
+        "poll_var": 2.812
       },
-      "p_dside_win": 0.4956,
+      "p_dside_win": 0.6049,
       "interval80": [
-        -5.112,
-        5.057
+        -4.069,
+        6.121
       ],
       "name": "Alaska",
       "ev_detail": "none",
-      "county_method": "none"
+      "ei_status": "fallback",
+      "county_method": "group_tilt+urban"
     },
     {
       "state": "AR",
@@ -149,32 +156,35 @@
       },
       "rcv": false,
       "pres2024_margin": -31.34,
-      "proj_margin": -16.778,
-      "shift": 15.134,
+      "proj_margin": -16.079,
+      "shift": 15.503,
       "swing_source": "combined",
       "components": {
-        "national": 12.594,
-        "state_poll": 20.215,
+        "national": 11.045,
+        "state_poll": 20.83,
         "market": null,
         "market_weight": 0.0,
-        "state_swing": 15.134,
-        "turnout": -0.573,
+        "state_swing": 15.503,
+        "demographic": -2.446,
+        "turnout": -0.242,
         "early_vote": 0.0
       },
       "polls": {
         "n": 2,
-        "avg_margin": -11.125,
-        "n_eff": 2.0
+        "avg_margin": -10.51,
+        "n_eff": 2.0,
+        "w_poll": 0.65,
+        "poll_var": 8.605
       },
-      "p_dside_win": 0.0029,
+      "p_dside_win": 0.0034,
       "interval80": [
-        -23.126,
-        -10.474
+        -22.424,
+        -9.74
       ],
       "name": "Arkansas",
       "ev_detail": "none",
-      "ei_status": "fallback",
-      "county_method": "uniform"
+      "ei_status": "ok",
+      "county_method": "group_tilt+urban"
     },
     {
       "state": "CO",
@@ -193,32 +203,35 @@
       },
       "rcv": false,
       "pres2024_margin": 11.293,
-      "proj_margin": 22.843,
-      "shift": 11.628,
+      "proj_margin": 22.847,
+      "shift": 11.271,
       "swing_source": "combined",
       "components": {
-        "national": 12.594,
-        "state_poll": 9.695,
+        "national": 11.045,
+        "state_poll": 9.679,
         "market": null,
         "market_weight": 0.0,
-        "state_swing": 11.628,
-        "turnout": -0.078,
+        "state_swing": 11.271,
+        "demographic": 0.591,
+        "turnout": 0.283,
         "early_vote": 0.0
       },
       "polls": {
         "n": 3,
-        "avg_margin": 20.988,
-        "n_eff": 2.315
+        "avg_margin": 20.972,
+        "n_eff": 2.315,
+        "w_poll": 0.679,
+        "poll_var": 7.571
       },
       "p_dside_win": 0.9996,
       "interval80": [
-        16.461,
-        29.195
+        16.472,
+        29.172
       ],
       "name": "Colorado",
       "ev_detail": "none",
-      "ei_status": "fallback",
-      "county_method": "uniform"
+      "ei_status": "ok",
+      "county_method": "group_tilt+urban"
     },
     {
       "state": "DE",
@@ -237,32 +250,35 @@
       },
       "rcv": false,
       "pres2024_margin": 14.958,
-      "proj_margin": 27.254,
-      "shift": 12.594,
+      "proj_margin": 24.621,
+      "shift": 9.862,
       "swing_source": "national_fallback",
       "components": {
-        "national": 12.594,
+        "national": 11.045,
         "state_poll": null,
         "market": null,
         "market_weight": 0.0,
-        "state_swing": 12.594,
-        "turnout": -0.298,
+        "state_swing": 9.862,
+        "demographic": -1.182,
+        "turnout": -0.2,
         "early_vote": 0.0
       },
       "polls": {
         "n": 0,
         "avg_margin": null,
-        "n_eff": 0.0
+        "n_eff": 0.0,
+        "w_poll": 0.0,
+        "poll_var": null
       },
-      "p_dside_win": 1.0,
+      "p_dside_win": 0.9998,
       "interval80": [
-        21.202,
-        33.188
+        18.568,
+        30.554
       ],
       "name": "Delaware",
       "ev_detail": "none",
       "ei_status": "fallback",
-      "county_method": "uniform"
+      "county_method": "group_tilt"
     },
     {
       "state": "FL",
@@ -281,32 +297,35 @@
       },
       "rcv": false,
       "pres2024_margin": -13.222,
-      "proj_margin": -3.141,
-      "shift": 10.598,
+      "proj_margin": -6.863,
+      "shift": 6.739,
       "swing_source": "combined",
       "components": {
-        "national": 12.594,
-        "state_poll": 6.607,
+        "national": 11.045,
+        "state_poll": 6.587,
         "market": null,
         "market_weight": 0.0,
-        "state_swing": 10.598,
-        "turnout": -0.518,
+        "state_swing": 6.739,
+        "demographic": 0.057,
+        "turnout": -0.38,
         "early_vote": 0.0
       },
       "polls": {
         "n": 27,
-        "avg_margin": -6.615,
-        "n_eff": 19.192
+        "avg_margin": -6.635,
+        "n_eff": 19.192,
+        "w_poll": 0.899,
+        "poll_var": 1.793
       },
-      "p_dside_win": 0.229,
+      "p_dside_win": 0.0584,
       "interval80": [
-        -8.751,
-        2.429
+        -12.476,
+        -1.29
       ],
       "name": "Florida",
       "ev_detail": "none",
-      "ei_status": "fallback",
-      "county_method": "uniform"
+      "ei_status": "ok",
+      "county_method": "group_tilt+urban"
     },
     {
       "state": "GA",
@@ -325,32 +344,35 @@
       },
       "rcv": false,
       "pres2024_margin": -2.209,
-      "proj_margin": 8.899,
-      "shift": 12.404,
+      "proj_margin": 9.165,
+      "shift": 12.153,
       "swing_source": "combined",
       "components": {
-        "national": 12.594,
-        "state_poll": 12.025,
+        "national": 11.045,
+        "state_poll": 11.99,
         "market": null,
         "market_weight": 0.0,
-        "state_swing": 12.404,
-        "turnout": -1.297,
+        "state_swing": 12.153,
+        "demographic": -1.093,
+        "turnout": -0.779,
         "early_vote": 0.0
       },
       "polls": {
         "n": 13,
-        "avg_margin": 9.816,
-        "n_eff": 6.699
+        "avg_margin": 9.781,
+        "n_eff": 6.699,
+        "w_poll": 0.83,
+        "poll_var": 3.27
       },
-      "p_dside_win": 0.9737,
+      "p_dside_win": 0.9766,
       "interval80": [
-        3.243,
-        14.462
+        3.508,
+        14.73
       ],
       "name": "Georgia",
       "ev_detail": "none",
-      "ei_status": "fallback",
-      "county_method": "uniform"
+      "ei_status": "ok",
+      "county_method": "group_tilt+urban"
     },
     {
       "state": "ID",
@@ -369,32 +391,35 @@
       },
       "rcv": false,
       "pres2024_margin": -37.522,
-      "proj_margin": -20.14,
-      "shift": 17.351,
+      "proj_margin": -16.086,
+      "shift": 21.128,
       "swing_source": "combined",
       "components": {
-        "national": 12.594,
+        "national": 11.045,
         "state_poll": 26.866,
         "market": null,
         "market_weight": 0.0,
-        "state_swing": 17.351,
-        "turnout": 0.03,
+        "state_swing": 21.128,
+        "demographic": -0.596,
+        "turnout": 0.307,
         "early_vote": 0.0
       },
       "polls": {
         "n": 3,
         "avg_margin": -10.656,
-        "n_eff": 2.664
+        "n_eff": 2.664,
+        "w_poll": 0.705,
+        "poll_var": 6.711
       },
-      "p_dside_win": 0.0006,
+      "p_dside_win": 0.0022,
       "interval80": [
-        -26.389,
-        -13.935
+        -22.351,
+        -9.87
       ],
       "name": "Idaho",
       "ev_detail": "none",
-      "ei_status": "fallback",
-      "county_method": "uniform"
+      "ei_status": "ok",
+      "county_method": "group_tilt+urban"
     },
     {
       "state": "IL",
@@ -413,32 +438,35 @@
       },
       "rcv": false,
       "pres2024_margin": 11.136,
-      "proj_margin": 19.283,
-      "shift": 9.19,
+      "proj_margin": 16.125,
+      "shift": 5.592,
       "swing_source": "combined",
       "components": {
-        "national": 12.594,
-        "state_poll": 2.382,
+        "national": 11.045,
+        "state_poll": 2.34,
         "market": null,
         "market_weight": 0.0,
-        "state_swing": 9.19,
-        "turnout": -1.042,
+        "state_swing": 5.592,
+        "demographic": 0.231,
+        "turnout": -0.603,
         "early_vote": 0.0
       },
       "polls": {
         "n": 4,
-        "avg_margin": 13.517,
-        "n_eff": 3.047
+        "avg_margin": 13.475,
+        "n_eff": 3.047,
+        "w_poll": 0.728,
+        "poll_var": 5.992
       },
-      "p_dside_win": 0.9989,
+      "p_dside_win": 0.9972,
       "interval80": [
-        13.175,
-        25.455
+        10.034,
+        22.296
       ],
       "name": "Illinois",
       "ev_detail": "none",
-      "ei_status": "fallback",
-      "county_method": "uniform"
+      "ei_status": "ok",
+      "county_method": "group_tilt+urban"
     },
     {
       "state": "IA",
@@ -456,33 +484,36 @@
         "party": "R"
       },
       "rcv": false,
-      "pres2024_margin": -13.471,
-      "proj_margin": -0.604,
-      "shift": 13.028,
+      "pres2024_margin": -13.446,
+      "proj_margin": -0.123,
+      "shift": 13.16,
       "swing_source": "combined",
       "components": {
-        "national": 12.594,
-        "state_poll": 13.895,
+        "national": 11.045,
+        "state_poll": 13.902,
         "market": null,
         "market_weight": 0.0,
-        "state_swing": 13.028,
-        "turnout": -0.161,
+        "state_swing": 13.16,
+        "demographic": -0.492,
+        "turnout": 0.162,
         "early_vote": 0.0
       },
       "polls": {
         "n": 28,
-        "avg_margin": 0.425,
-        "n_eff": 13.635
+        "avg_margin": 0.456,
+        "n_eff": 13.635,
+        "w_poll": 0.883,
+        "poll_var": 2.115
       },
-      "p_dside_win": 0.442,
+      "p_dside_win": 0.4949,
       "interval80": [
-        -5.585,
-        4.446
+        -5.769,
+        5.59
       ],
       "name": "Iowa",
       "ev_detail": "none",
-      "ei_status": "fallback",
-      "county_method": "uniform"
+      "ei_status": "ok",
+      "county_method": "group_tilt+urban"
     },
     {
       "state": "KS",
@@ -501,32 +532,35 @@
       },
       "rcv": false,
       "pres2024_margin": -16.411,
-      "proj_margin": -1.711,
-      "shift": 14.937,
+      "proj_margin": 1.829,
+      "shift": 18.066,
       "swing_source": "combined",
       "components": {
-        "national": 12.594,
-        "state_poll": 19.623,
+        "national": 11.045,
+        "state_poll": 19.661,
         "market": null,
         "market_weight": 0.0,
-        "state_swing": 14.937,
-        "turnout": -0.237,
+        "state_swing": 18.066,
+        "demographic": 0.01,
+        "turnout": 0.175,
         "early_vote": 0.0
       },
       "polls": {
         "n": 17,
-        "avg_margin": 3.211,
-        "n_eff": 9.809
+        "avg_margin": 3.25,
+        "n_eff": 9.809,
+        "w_poll": 0.863,
+        "poll_var": 2.551
       },
-      "p_dside_win": 0.3452,
+      "p_dside_win": 0.6629,
       "interval80": [
-        -7.35,
-        4.025
+        -3.81,
+        7.573
       ],
       "name": "Kansas",
       "ev_detail": "none",
-      "ei_status": "fallback",
-      "county_method": "uniform"
+      "ei_status": "ok",
+      "county_method": "group_tilt+urban"
     },
     {
       "state": "KY",
@@ -545,32 +579,35 @@
       },
       "rcv": false,
       "pres2024_margin": -31.028,
-      "proj_margin": -18.875,
-      "shift": 12.594,
+      "proj_margin": -22.752,
+      "shift": 8.229,
       "swing_source": "national_fallback",
       "components": {
-        "national": 12.594,
+        "national": 11.045,
         "state_poll": null,
         "market": null,
         "market_weight": 0.0,
-        "state_swing": 12.594,
-        "turnout": -0.441,
+        "state_swing": 8.229,
+        "demographic": -2.816,
+        "turnout": 0.047,
         "early_vote": 0.0
       },
       "polls": {
         "n": 0,
         "avg_margin": null,
-        "n_eff": 0.0
+        "n_eff": 0.0,
+        "w_poll": 0.0,
+        "poll_var": null
       },
-      "p_dside_win": 0.0008,
+      "p_dside_win": 0.0002,
       "interval80": [
-        -24.891,
-        -12.842
+        -28.764,
+        -16.672
       ],
       "name": "Kentucky",
       "ev_detail": "none",
-      "ei_status": "fallback",
-      "county_method": "uniform"
+      "ei_status": "ok",
+      "county_method": "group_tilt+urban"
     },
     {
       "state": "LA",
@@ -588,33 +625,36 @@
         "party": "R"
       },
       "rcv": false,
-      "pres2024_margin": -22.706,
-      "proj_margin": -7.638,
-      "shift": 15.877,
+      "pres2024_margin": -22.357,
+      "proj_margin": -5.986,
+      "shift": 16.793,
       "swing_source": "combined",
       "components": {
-        "national": 12.594,
-        "state_poll": 22.443,
+        "national": 11.045,
+        "state_poll": 22.094,
         "market": null,
         "market_weight": 0.0,
-        "state_swing": 15.877,
-        "turnout": -0.809,
+        "state_swing": 16.793,
+        "demographic": -2.131,
+        "turnout": -0.422,
         "early_vote": 0.0
       },
       "polls": {
         "n": 3,
         "avg_margin": -0.263,
-        "n_eff": 2.238
+        "n_eff": 2.238,
+        "w_poll": 0.672,
+        "poll_var": 7.796
       },
-      "p_dside_win": 0.0497,
+      "p_dside_win": 0.1057,
       "interval80": [
-        -13.437,
-        -1.905
+        -12.199,
+        0.176
       ],
       "name": "Louisiana",
       "ev_detail": "none",
-      "ei_status": "fallback",
-      "county_method": "uniform"
+      "ei_status": "ok",
+      "county_method": "group_tilt+urban"
     },
     {
       "state": "ME",
@@ -633,32 +673,35 @@
       },
       "rcv": true,
       "pres2024_margin": 6.608,
-      "proj_margin": 13.876,
-      "shift": 7.292,
+      "proj_margin": 4.694,
+      "shift": -2.185,
       "swing_source": "combined",
       "components": {
-        "national": 12.594,
-        "state_poll": -3.311,
+        "national": 11.045,
+        "state_poll": -3.287,
         "market": null,
         "market_weight": 0.0,
-        "state_swing": 7.292,
-        "turnout": -0.025,
+        "state_swing": -2.185,
+        "demographic": -1.194,
+        "turnout": 0.271,
         "early_vote": 0.0
       },
       "polls": {
         "n": 31,
-        "avg_margin": 3.297,
-        "n_eff": 15.985
+        "avg_margin": 3.321,
+        "n_eff": 15.985,
+        "w_poll": 0.891,
+        "poll_var": 1.952
       },
-      "p_dside_win": 0.9974,
+      "p_dside_win": 0.8596,
       "interval80": [
-        8.843,
-        18.858
+        -0.962,
+        10.415
       ],
       "name": "Maine",
       "ev_detail": "none",
       "ei_status": "fallback",
-      "county_method": "uniform"
+      "county_method": "group_tilt+urban"
     },
     {
       "state": "MA",
@@ -677,32 +720,35 @@
       },
       "rcv": false,
       "pres2024_margin": 25.911,
-      "proj_margin": 35.529,
-      "shift": 9.738,
+      "proj_margin": 32.072,
+      "shift": 6.106,
       "swing_source": "combined",
       "components": {
-        "national": 12.594,
-        "state_poll": 4.027,
+        "national": 11.045,
+        "state_poll": 4.01,
         "market": null,
         "market_weight": 0.0,
-        "state_swing": 9.738,
-        "turnout": -0.121,
+        "state_swing": 6.106,
+        "demographic": 0.098,
+        "turnout": 0.055,
         "early_vote": 0.0
       },
       "polls": {
         "n": 6,
-        "avg_margin": 29.938,
-        "n_eff": 4.794
+        "avg_margin": 29.92,
+        "n_eff": 4.794,
+        "w_poll": 0.793,
+        "poll_var": 4.173
       },
       "p_dside_win": 1.0,
       "interval80": [
-        30.281,
-        40.852
+        26.135,
+        38.02
       ],
       "name": "Massachusetts",
       "ev_detail": "none",
       "ei_status": "fallback",
-      "county_method": "uniform"
+      "county_method": "group_tilt+urban"
     },
     {
       "state": "MI",
@@ -721,32 +767,35 @@
       },
       "rcv": false,
       "pres2024_margin": -1.442,
-      "proj_margin": 8.621,
-      "shift": 10.5,
+      "proj_margin": 5.393,
+      "shift": 7.008,
       "swing_source": "combined",
       "components": {
-        "national": 12.594,
-        "state_poll": 6.312,
+        "national": 11.045,
+        "state_poll": 6.327,
         "market": null,
         "market_weight": 0.0,
-        "state_swing": 10.5,
-        "turnout": -0.437,
+        "state_swing": 7.008,
+        "demographic": -0.908,
+        "turnout": -0.172,
         "early_vote": 0.0
       },
       "polls": {
         "n": 42,
-        "avg_margin": 4.87,
-        "n_eff": 19.949
+        "avg_margin": 4.885,
+        "n_eff": 19.949,
+        "w_poll": 0.9,
+        "poll_var": 1.762
       },
-      "p_dside_win": 0.968,
+      "p_dside_win": 0.892,
       "interval80": [
-        3.021,
-        14.233
+        -0.201,
+        11.006
       ],
       "name": "Michigan",
       "ev_detail": "none",
-      "ei_status": "fallback",
-      "county_method": "uniform"
+      "ei_status": "ok",
+      "county_method": "group_tilt+urban"
     },
     {
       "state": "MN",
@@ -765,32 +814,35 @@
       },
       "rcv": false,
       "pres2024_margin": 4.343,
-      "proj_margin": 12.56,
-      "shift": 8.613,
+      "proj_margin": 6.799,
+      "shift": 2.34,
       "swing_source": "combined",
       "components": {
-        "national": 12.594,
-        "state_poll": 0.652,
+        "national": 11.045,
+        "state_poll": 0.628,
         "market": null,
         "market_weight": 0.0,
-        "state_swing": 8.613,
-        "turnout": -0.397,
+        "state_swing": 2.34,
+        "demographic": -0.33,
+        "turnout": 0.116,
         "early_vote": 0.0
       },
       "polls": {
         "n": 19,
-        "avg_margin": 4.995,
-        "n_eff": 10.797
+        "avg_margin": 4.972,
+        "n_eff": 10.797,
+        "w_poll": 0.869,
+        "poll_var": 2.409
       },
-      "p_dside_win": 0.9937,
+      "p_dside_win": 0.9332,
       "interval80": [
-        6.847,
-        18.238
+        1.091,
+        12.464
       ],
       "name": "Minnesota",
       "ev_detail": "none",
-      "ei_status": "fallback",
-      "county_method": "uniform"
+      "ei_status": "ok",
+      "county_method": "group_tilt+urban"
     },
     {
       "state": "MS",
@@ -809,32 +861,35 @@
       },
       "rcv": false,
       "pres2024_margin": -23.145,
-      "proj_margin": -9.533,
-      "shift": 14.559,
+      "proj_margin": -11.719,
+      "shift": 12.143,
       "swing_source": "combined",
       "components": {
-        "national": 12.594,
-        "state_poll": 18.487,
+        "national": 11.045,
+        "state_poll": 18.489,
         "market": null,
         "market_weight": 0.0,
-        "state_swing": 14.559,
-        "turnout": -0.946,
+        "state_swing": 12.143,
+        "demographic": -2.165,
+        "turnout": -0.717,
         "early_vote": 0.0
       },
       "polls": {
         "n": 1,
-        "avg_margin": -4.658,
-        "n_eff": 1.0
+        "avg_margin": -4.656,
+        "n_eff": 1.0,
+        "w_poll": 0.497,
+        "poll_var": 16.21
       },
-      "p_dside_win": 0.0466,
+      "p_dside_win": 0.024,
       "interval80": [
-        -16.683,
-        -2.44
+        -18.878,
+        -4.612
       ],
       "name": "Mississippi",
       "ev_detail": "none",
       "ei_status": "ok",
-      "county_method": "uniform"
+      "county_method": "group_tilt+urban"
     },
     {
       "state": "MT",
@@ -853,32 +908,35 @@
       },
       "rcv": false,
       "pres2024_margin": -20.578,
-      "proj_margin": -9.796,
-      "shift": 10.884,
+      "proj_margin": -12.968,
+      "shift": 7.446,
       "swing_source": "combined",
       "components": {
-        "national": 12.594,
+        "national": 11.045,
         "state_poll": 7.465,
         "market": null,
         "market_weight": 0.0,
-        "state_swing": 10.884,
-        "turnout": -0.102,
+        "state_swing": 7.446,
+        "demographic": -0.691,
+        "turnout": 0.164,
         "early_vote": 0.0
       },
       "polls": {
         "n": 9,
         "avg_margin": -13.113,
-        "n_eff": 6.51
+        "n_eff": 6.51,
+        "w_poll": 0.827,
+        "poll_var": 3.336
       },
-      "p_dside_win": 0.0204,
+      "p_dside_win": 0.0049,
       "interval80": [
-        -15.701,
-        -4.021
+        -18.885,
+        -7.181
       ],
       "name": "Montana",
       "ev_detail": "none",
-      "ei_status": "fallback",
-      "county_method": "uniform"
+      "ei_status": "ok",
+      "county_method": "group_tilt+urban"
     },
     {
       "state": "NE",
@@ -897,32 +955,35 @@
       },
       "rcv": false,
       "pres2024_margin": -20.841,
-      "proj_margin": -6.515,
-      "shift": 14.598,
+      "proj_margin": -4.108,
+      "shift": 16.613,
       "swing_source": "combined",
       "components": {
-        "national": 12.594,
-        "state_poll": 18.606,
+        "national": 11.045,
+        "state_poll": 18.074,
         "market": null,
         "market_weight": 0.0,
-        "state_swing": 14.598,
-        "turnout": -0.272,
+        "state_swing": 16.613,
+        "demographic": -0.075,
+        "turnout": 0.121,
         "early_vote": 0.0
       },
       "polls": {
         "n": 14,
-        "avg_margin": -2.235,
-        "n_eff": 8.808
+        "avg_margin": -2.766,
+        "n_eff": 8.915,
+        "w_poll": 0.855,
+        "poll_var": 2.706
       },
-      "p_dside_win": 0.072,
+      "p_dside_win": 0.1772,
       "interval80": [
-        -12.19,
-        -0.823
+        -9.783,
+        1.572
       ],
       "name": "Nebraska",
       "ev_detail": "none",
-      "ei_status": "fallback",
-      "county_method": "uniform"
+      "ei_status": "ok",
+      "county_method": "group_tilt+urban"
     },
     {
       "state": "NH",
@@ -941,32 +1002,35 @@
       },
       "rcv": false,
       "pres2024_margin": 2.821,
-      "proj_margin": 12.804,
-      "shift": 9.994,
+      "proj_margin": 8.858,
+      "shift": 6.036,
       "swing_source": "combined",
       "components": {
-        "national": 12.594,
-        "state_poll": 4.795,
+        "national": 11.045,
+        "state_poll": 4.766,
         "market": null,
         "market_weight": 0.0,
-        "state_swing": 9.994,
-        "turnout": -0.011,
+        "state_swing": 6.036,
+        "demographic": -0.957,
+        "turnout": 0.001,
         "early_vote": 0.0
       },
       "polls": {
         "n": 16,
-        "avg_margin": 7.616,
-        "n_eff": 8.083
+        "avg_margin": 7.587,
+        "n_eff": 8.083,
+        "w_poll": 0.847,
+        "poll_var": 2.882
       },
-      "p_dside_win": 0.996,
+      "p_dside_win": 0.9709,
       "interval80": [
-        7.749,
-        17.951
+        3.125,
+        14.607
       ],
       "name": "New Hampshire",
       "ev_detail": "none",
       "ei_status": "fallback",
-      "county_method": "uniform"
+      "county_method": "group_tilt"
     },
     {
       "state": "NJ",
@@ -985,32 +1049,35 @@
       },
       "rcv": false,
       "pres2024_margin": 6.028,
-      "proj_margin": 18.009,
-      "shift": 12.594,
+      "proj_margin": 17.173,
+      "shift": 11.68,
       "swing_source": "national_fallback",
       "components": {
-        "national": 12.594,
+        "national": 11.045,
         "state_poll": null,
         "market": null,
         "market_weight": 0.0,
-        "state_swing": 12.594,
-        "turnout": -0.613,
+        "state_swing": 11.68,
+        "demographic": 0.635,
+        "turnout": -0.534,
         "early_vote": 0.0
       },
       "polls": {
         "n": 0,
         "avg_margin": null,
-        "n_eff": 0.0
+        "n_eff": 0.0,
+        "w_poll": 0.0,
+        "poll_var": null
       },
-      "p_dside_win": 0.9984,
+      "p_dside_win": 0.9982,
       "interval80": [
-        11.98,
-        24.027
+        11.14,
+        23.18
       ],
       "name": "New Jersey",
       "ev_detail": "none",
-      "ei_status": "fallback",
-      "county_method": "uniform"
+      "ei_status": "ok",
+      "county_method": "group_tilt"
     },
     {
       "state": "NM",
@@ -1029,32 +1096,35 @@
       },
       "rcv": false,
       "pres2024_margin": 6.142,
-      "proj_margin": 18.613,
-      "shift": 12.594,
+      "proj_margin": 20.314,
+      "shift": 13.962,
       "swing_source": "national_fallback",
       "components": {
-        "national": 12.594,
+        "national": 11.045,
         "state_poll": null,
         "market": null,
         "market_weight": 0.0,
-        "state_swing": 12.594,
-        "turnout": -0.123,
+        "state_swing": 13.962,
+        "demographic": 2.917,
+        "turnout": 0.21,
         "early_vote": 0.0
       },
       "polls": {
         "n": 0,
         "avg_margin": null,
-        "n_eff": 0.0
+        "n_eff": 0.0,
+        "w_poll": 0.0,
+        "poll_var": null
       },
-      "p_dside_win": 0.9992,
+      "p_dside_win": 0.9994,
       "interval80": [
-        12.675,
-        24.519
+        14.377,
+        26.213
       ],
       "name": "New Mexico",
       "ev_detail": "none",
-      "ei_status": "fallback",
-      "county_method": "uniform"
+      "ei_status": "ok",
+      "county_method": "group_tilt+urban"
     },
     {
       "state": "NC",
@@ -1073,32 +1143,35 @@
       },
       "rcv": false,
       "pres2024_margin": -3.261,
-      "proj_margin": 9.488,
-      "shift": 13.261,
+      "proj_margin": 10.41,
+      "shift": 13.541,
       "swing_source": "combined",
       "components": {
-        "national": 12.594,
-        "state_poll": 14.594,
+        "national": 11.045,
+        "state_poll": 14.573,
         "market": null,
         "market_weight": 0.0,
-        "state_swing": 13.261,
-        "turnout": -0.512,
-        "early_vote": 0.0
+        "state_swing": 13.541,
+        "demographic": -0.991,
+        "turnout": -0.017,
+        "early_vote": 0.147
       },
       "polls": {
         "n": 23,
-        "avg_margin": 11.333,
-        "n_eff": 9.846
+        "avg_margin": 11.312,
+        "n_eff": 9.846,
+        "w_poll": 0.863,
+        "poll_var": 2.545
       },
-      "p_dside_win": 0.9794,
+      "p_dside_win": 0.9857,
       "interval80": [
-        3.832,
-        15.015
+        4.75,
+        15.932
       ],
       "name": "North Carolina",
-      "ev_detail": "none",
-      "ei_status": "fallback",
-      "county_method": "uniform"
+      "ev_detail": "full",
+      "ei_status": "ok",
+      "county_method": "group_tilt+urban"
     },
     {
       "state": "OH",
@@ -1117,32 +1190,35 @@
       },
       "rcv": false,
       "pres2024_margin": -11.313,
-      "proj_margin": 1.267,
-      "shift": 13.121,
+      "proj_margin": 1.664,
+      "shift": 13.147,
       "swing_source": "combined",
       "components": {
-        "national": 12.594,
-        "state_poll": 14.174,
+        "national": 11.045,
+        "state_poll": 13.833,
         "market": null,
         "market_weight": 0.0,
-        "state_swing": 13.121,
-        "turnout": -0.54,
+        "state_swing": 13.147,
+        "demographic": -1.076,
+        "turnout": -0.169,
         "early_vote": 0.0
       },
       "polls": {
         "n": 35,
-        "avg_margin": 2.861,
-        "n_eff": 20.393
+        "avg_margin": 2.52,
+        "n_eff": 20.393,
+        "w_poll": 0.9,
+        "poll_var": 1.746
       },
-      "p_dside_win": 0.6173,
+      "p_dside_win": 0.6508,
       "interval80": [
-        -4.401,
-        6.791
+        -4.008,
+        7.201
       ],
       "name": "Ohio",
       "ev_detail": "none",
-      "ei_status": "fallback",
-      "county_method": "uniform"
+      "ei_status": "ok",
+      "county_method": "group_tilt+urban"
     },
     {
       "state": "OK",
@@ -1161,32 +1237,35 @@
       },
       "rcv": false,
       "pres2024_margin": -34.94,
-      "proj_margin": -22.525,
-      "shift": 12.594,
+      "proj_margin": -25.639,
+      "shift": 9.224,
       "swing_source": "national_fallback",
       "components": {
-        "national": 12.594,
+        "national": 11.045,
         "state_poll": null,
         "market": null,
         "market_weight": 0.0,
-        "state_swing": 12.594,
-        "turnout": -0.179,
+        "state_swing": 9.224,
+        "demographic": -1.821,
+        "turnout": 0.077,
         "early_vote": 0.0
       },
       "polls": {
         "n": 0,
         "avg_margin": null,
-        "n_eff": 0.0
+        "n_eff": 0.0,
+        "w_poll": 0.0,
+        "poll_var": null
       },
-      "p_dside_win": 0.0003,
+      "p_dside_win": 0.0001,
       "interval80": [
-        -28.516,
-        -16.527
+        -31.66,
+        -19.622
       ],
       "name": "Oklahoma",
       "ev_detail": "none",
-      "ei_status": "fallback",
-      "county_method": "uniform"
+      "ei_status": "ok",
+      "county_method": "group_tilt+urban"
     },
     {
       "state": "OR",
@@ -1205,32 +1284,35 @@
       },
       "rcv": false,
       "pres2024_margin": 14.866,
-      "proj_margin": 27.218,
-      "shift": 12.594,
+      "proj_margin": 25.798,
+      "shift": 10.72,
       "swing_source": "national_fallback",
       "components": {
-        "national": 12.594,
+        "national": 11.045,
         "state_poll": null,
         "market": null,
         "market_weight": 0.0,
-        "state_swing": 12.594,
-        "turnout": -0.242,
+        "state_swing": 10.72,
+        "demographic": -0.324,
+        "turnout": 0.212,
         "early_vote": 0.0
       },
       "polls": {
         "n": 0,
         "avg_margin": null,
-        "n_eff": 0.0
+        "n_eff": 0.0,
+        "w_poll": 0.0,
+        "poll_var": null
       },
       "p_dside_win": 1.0,
       "interval80": [
-        21.846,
-        32.549
+        19.835,
+        31.777
       ],
       "name": "Oregon",
       "ev_detail": "none",
       "ei_status": "fallback",
-      "county_method": "uniform"
+      "county_method": "group_tilt+urban"
     },
     {
       "state": "RI",
@@ -1249,32 +1331,35 @@
       },
       "rcv": false,
       "pres2024_margin": 13.946,
-      "proj_margin": 26.534,
-      "shift": 12.594,
+      "proj_margin": 24.711,
+      "shift": 10.717,
       "swing_source": "national_fallback",
       "components": {
-        "national": 12.594,
+        "national": 11.045,
         "state_poll": null,
         "market": null,
         "market_weight": 0.0,
-        "state_swing": 12.594,
-        "turnout": -0.007,
+        "state_swing": 10.717,
+        "demographic": -0.328,
+        "turnout": 0.048,
         "early_vote": 0.0
       },
       "polls": {
         "n": 0,
         "avg_margin": null,
-        "n_eff": 0.0
+        "n_eff": 0.0,
+        "w_poll": 0.0,
+        "poll_var": null
       },
-      "p_dside_win": 1.0,
+      "p_dside_win": 0.9998,
       "interval80": [
-        21.04,
-        31.91
+        18.663,
+        30.732
       ],
       "name": "Rhode Island",
       "ev_detail": "none",
       "ei_status": "fallback",
-      "county_method": "uniform"
+      "county_method": "group_tilt"
     },
     {
       "state": "SC",
@@ -1293,32 +1378,35 @@
       },
       "rcv": false,
       "pres2024_margin": -18.123,
-      "proj_margin": -5.925,
-      "shift": 12.594,
+      "proj_margin": -8.834,
+      "shift": 9.528,
       "swing_source": "national_fallback",
       "components": {
-        "national": 12.594,
+        "national": 11.045,
         "state_poll": null,
         "market": null,
         "market_weight": 0.0,
-        "state_swing": 12.594,
-        "turnout": -0.396,
+        "state_swing": 9.528,
+        "demographic": -1.517,
+        "turnout": -0.238,
         "early_vote": 0.0
       },
       "polls": {
         "n": 0,
         "avg_margin": null,
-        "n_eff": 0.0
+        "n_eff": 0.0,
+        "w_poll": 0.0,
+        "poll_var": null
       },
-      "p_dside_win": 0.0997,
+      "p_dside_win": 0.0345,
       "interval80": [
-        -11.818,
-        -0.01
+        -14.721,
+        -2.918
       ],
       "name": "South Carolina",
       "ev_detail": "none",
-      "ei_status": "fallback",
-      "county_method": "uniform"
+      "ei_status": "ok",
+      "county_method": "group_tilt+urban"
     },
     {
       "state": "SD",
@@ -1337,32 +1425,35 @@
       },
       "rcv": false,
       "pres2024_margin": -29.89,
-      "proj_margin": -17.605,
-      "shift": 12.594,
+      "proj_margin": -19.371,
+      "shift": 10.706,
       "swing_source": "national_fallback",
       "components": {
-        "national": 12.594,
+        "national": 11.045,
         "state_poll": null,
         "market": null,
         "market_weight": 0.0,
-        "state_swing": 12.594,
-        "turnout": -0.309,
+        "state_swing": 10.706,
+        "demographic": -0.339,
+        "turnout": -0.187,
         "early_vote": 0.0
       },
       "polls": {
         "n": 0,
         "avg_margin": null,
-        "n_eff": 0.0
+        "n_eff": 0.0,
+        "w_poll": 0.0,
+        "poll_var": null
       },
-      "p_dside_win": 0.0013,
+      "p_dside_win": 0.0009,
       "interval80": [
-        -23.642,
-        -11.565
+        -25.426,
+        -13.34
       ],
       "name": "South Dakota",
       "ev_detail": "none",
-      "ei_status": "fallback",
-      "county_method": "uniform"
+      "ei_status": "ok",
+      "county_method": "group_tilt+urban"
     },
     {
       "state": "TN",
@@ -1381,32 +1472,35 @@
       },
       "rcv": false,
       "pres2024_margin": -30.121,
-      "proj_margin": -18.374,
-      "shift": 12.594,
+      "proj_margin": -21.648,
+      "shift": 8.812,
       "swing_source": "national_fallback",
       "components": {
-        "national": 12.594,
+        "national": 11.045,
         "state_poll": null,
         "market": null,
         "market_weight": 0.0,
-        "state_swing": 12.594,
-        "turnout": -0.847,
+        "state_swing": 8.812,
+        "demographic": -2.233,
+        "turnout": -0.338,
         "early_vote": 0.0
       },
       "polls": {
         "n": 0,
         "avg_margin": null,
-        "n_eff": 0.0
+        "n_eff": 0.0,
+        "w_poll": 0.0,
+        "poll_var": null
       },
-      "p_dside_win": 0.0007,
+      "p_dside_win": 0.0003,
       "interval80": [
-        -24.337,
-        -12.396
+        -27.62,
+        -15.655
       ],
       "name": "Tennessee",
       "ev_detail": "none",
       "ei_status": "fallback",
-      "county_method": "uniform"
+      "county_method": "group_tilt+urban"
     },
     {
       "state": "TX",
@@ -1424,33 +1518,36 @@
         "party": "R"
       },
       "rcv": false,
-      "pres2024_margin": -13.628,
-      "proj_margin": -0.565,
-      "shift": 14.017,
+      "pres2024_margin": -13.878,
+      "proj_margin": 1.926,
+      "shift": 16.414,
       "swing_source": "combined",
       "components": {
-        "national": 12.594,
-        "state_poll": 16.863,
+        "national": 11.045,
+        "state_poll": 17.139,
         "market": null,
         "market_weight": 0.0,
-        "state_swing": 14.017,
-        "turnout": -0.954,
+        "state_swing": 16.414,
+        "demographic": 1.845,
+        "turnout": -0.61,
         "early_vote": 0.0
       },
       "polls": {
         "n": 52,
-        "avg_margin": 3.235,
-        "n_eff": 29.824
+        "avg_margin": 3.261,
+        "n_eff": 29.824,
+        "w_poll": 0.9,
+        "poll_var": 1.51
       },
-      "p_dside_win": 0.4335,
+      "p_dside_win": 0.6733,
       "interval80": [
-        -5.528,
-        4.332
+        -3.548,
+        7.346
       ],
       "name": "Texas",
       "ev_detail": "none",
-      "ei_status": "fallback",
-      "county_method": "uniform"
+      "ei_status": "ok",
+      "county_method": "group_tilt+urban"
     },
     {
       "state": "VA",
@@ -1469,32 +1566,35 @@
       },
       "rcv": false,
       "pres2024_margin": 5.902,
-      "proj_margin": 17.704,
-      "shift": 12.594,
+      "proj_margin": 16.994,
+      "shift": 11.287,
       "swing_source": "national_fallback",
       "components": {
-        "national": 12.594,
+        "national": 11.045,
         "state_poll": null,
         "market": null,
         "market_weight": 0.0,
-        "state_swing": 12.594,
-        "turnout": -0.792,
+        "state_swing": 11.287,
+        "demographic": 0.242,
+        "turnout": -0.195,
         "early_vote": 0.0
       },
       "polls": {
         "n": 0,
         "avg_margin": null,
-        "n_eff": 0.0
+        "n_eff": 0.0,
+        "w_poll": 0.0,
+        "poll_var": null
       },
-      "p_dside_win": 0.9987,
+      "p_dside_win": 0.9984,
       "interval80": [
-        11.865,
-        23.74
+        11.152,
+        23.024
       ],
       "name": "Virginia",
       "ev_detail": "none",
-      "ei_status": "fallback",
-      "county_method": "uniform"
+      "ei_status": "ok",
+      "county_method": "group_tilt+urban"
     },
     {
       "state": "WV",
@@ -1513,32 +1613,35 @@
       },
       "rcv": false,
       "pres2024_margin": -42.688,
-      "proj_margin": -30.177,
-      "shift": 12.594,
+      "proj_margin": -35.212,
+      "shift": 7.352,
       "swing_source": "national_fallback",
       "components": {
-        "national": 12.594,
+        "national": 11.045,
         "state_poll": null,
         "market": null,
         "market_weight": 0.0,
-        "state_swing": 12.594,
-        "turnout": -0.083,
+        "state_swing": 7.352,
+        "demographic": -3.693,
+        "turnout": 0.124,
         "early_vote": 0.0
       },
       "polls": {
         "n": 0,
         "avg_margin": null,
-        "n_eff": 0.0
+        "n_eff": 0.0,
+        "w_poll": 0.0,
+        "poll_var": null
       },
-      "p_dside_win": 0.0001,
+      "p_dside_win": 0.0,
       "interval80": [
-        -36.227,
-        -24.113
+        -41.286,
+        -29.098
       ],
       "name": "West Virginia",
       "ev_detail": "none",
-      "ei_status": "fallback",
-      "county_method": "uniform"
+      "ei_status": "ok",
+      "county_method": "group_tilt+urban"
     },
     {
       "state": "WY",
@@ -1557,32 +1660,35 @@
       },
       "rcv": false,
       "pres2024_margin": -46.958,
-      "proj_margin": -34.442,
-      "shift": 12.594,
+      "proj_margin": -35.879,
+      "shift": 10.756,
       "swing_source": "national_fallback",
       "components": {
-        "national": 12.594,
+        "national": 11.045,
         "state_poll": null,
         "market": null,
         "market_weight": 0.0,
-        "state_swing": 12.594,
-        "turnout": -0.078,
+        "state_swing": 10.756,
+        "demographic": -0.289,
+        "turnout": 0.323,
         "early_vote": 0.0
       },
       "polls": {
         "n": 0,
         "avg_margin": null,
-        "n_eff": 0.0
+        "n_eff": 0.0,
+        "w_poll": 0.0,
+        "poll_var": null
       },
       "p_dside_win": 0.0001,
       "interval80": [
-        -40.463,
-        -28.497
+        -41.895,
+        -29.923
       ],
       "name": "Wyoming",
       "ev_detail": "none",
-      "ei_status": "fallback",
-      "county_method": "uniform"
+      "ei_status": "ok",
+      "county_method": "group_tilt+urban"
     }
   ],
   "simulation": {
@@ -1594,66 +1700,70 @@
     "seats": {
       "h_d": 34,
       "pmf": {
-        "35": 5e-05,
-        "43": 0.00025,
-        "44": 0.0006,
-        "45": 0.0009,
-        "46": 0.0023,
-        "47": 0.00495,
-        "48": 0.02175,
-        "49": 0.1266,
-        "50": 0.15645,
-        "51": 0.1745,
-        "52": 0.1655,
-        "53": 0.1346,
-        "54": 0.09565,
-        "55": 0.06015,
-        "56": 0.03245,
-        "57": 0.01415,
-        "58": 0.00505,
-        "59": 0.00285,
-        "60": 0.00095,
-        "61": 0.0001,
-        "62": 0.00015,
-        "69": 5e-05
+        "34": 5e-05,
+        "41": 5e-05,
+        "42": 0.0004,
+        "43": 0.0013,
+        "44": 0.00225,
+        "45": 0.00495,
+        "46": 0.0103,
+        "47": 0.01995,
+        "48": 0.0374,
+        "49": 0.0673,
+        "50": 0.0968,
+        "51": 0.1276,
+        "52": 0.15575,
+        "53": 0.16895,
+        "54": 0.16365,
+        "55": 0.0877,
+        "56": 0.0352,
+        "57": 0.01335,
+        "58": 0.0046,
+        "59": 0.0018,
+        "60": 0.00035,
+        "61": 0.00015,
+        "62": 0.0001,
+        "68": 5e-05
       },
-      "mean": 51.76105,
+      "mean": 52.109,
       "median": 52.0,
       "interval80": [
         49.0,
         55.0
       ],
-      "p_control": 0.68615,
+      "p_control": 0.75925,
       "threshold": 51.0
     },
     "tipping": {
-      "AL": 5e-05,
-      "AK": 0.18245,
+      "AK": 0.1351,
       "AR": 0.0004,
-      "CO": 0.0003,
-      "FL": 0.06515,
-      "GA": 0.01885,
-      "IL": 0.0005,
-      "IA": 0.16515,
-      "KS": 0.1204,
-      "KY": 0.0001,
-      "LA": 0.0094,
-      "ME": 0.0014,
-      "MI": 0.0175,
-      "MN": 0.0032,
-      "MS": 0.00885,
-      "MT": 0.00275,
-      "NE": 0.0109,
-      "NH": 0.00315,
-      "NJ": 0.0006,
+      "CO": 0.0002,
+      "DE": 5e-05,
+      "FL": 0.0055,
+      "GA": 0.0178,
+      "ID": 0.0004,
+      "IL": 0.00145,
+      "IA": 0.1068,
+      "KS": 0.15535,
+      "KY": 5e-05,
+      "LA": 0.01455,
+      "ME": 0.0953,
+      "MI": 0.0719,
+      "MN": 0.0406,
+      "MS": 0.0032,
+      "MT": 0.00035,
+      "NE": 0.01875,
+      "NH": 0.0178,
+      "NJ": 0.00065,
       "NM": 0.0003,
-      "NC": 0.01545,
-      "OH": 0.1941,
-      "SC": 0.01815,
-      "SD": 0.00015,
-      "TN": 0.0001,
-      "TX": 0.1602,
-      "VA": 0.00045
+      "NC": 0.00945,
+      "OH": 0.15345,
+      "OK": 5e-05,
+      "SC": 0.0032,
+      "SD": 5e-05,
+      "TN": 5e-05,
+      "TX": 0.1467,
+      "VA": 0.00055
     }
   },
   "mock": false
