@@ -1,0 +1,1660 @@
+{
+  "run_id": "20261103T095603Z",
+  "as_of": "2026-11-03",
+  "model_version": "0.5.0-phase5",
+  "phase": 5,
+  "national": {
+    "generic_ballot": {
+      "margin": 9.359,
+      "source": "aggregator_median_fallback",
+      "n_polls": 5,
+      "n_eff": 0.0,
+      "se": null
+    },
+    "npv2024": -3.236,
+    "s_nat": 12.594,
+    "senate": {
+      "d_seats_median": 52.0,
+      "d_seats_p10": 49.0,
+      "d_seats_p90": 55.0,
+      "p_d_control": 0.686,
+      "threshold": 51.0,
+      "distribution": {
+        "44": 0.001,
+        "45": 0.001,
+        "46": 0.002,
+        "47": 0.005,
+        "48": 0.022,
+        "49": 0.127,
+        "50": 0.156,
+        "51": 0.174,
+        "52": 0.166,
+        "53": 0.135,
+        "54": 0.096,
+        "55": 0.06,
+        "56": 0.032,
+        "57": 0.014,
+        "58": 0.005,
+        "59": 0.003,
+        "60": 0.001
+      }
+    }
+  },
+  "weights": {
+    "national": 2.0,
+    "state_poll": 1.0
+  },
+  "races": [
+    {
+      "state": "AL",
+      "class": 2,
+      "special": false,
+      "incumbent": "Tuberville",
+      "incumbent_party": "R",
+      "dside": {
+        "name": "Everett Wess",
+        "party": "D",
+        "endorsed_by_dem": false
+      },
+      "rside": {
+        "name": "Barry Moore",
+        "party": "R"
+      },
+      "rcv": false,
+      "pres2024_margin": -30.881,
+      "proj_margin": -19.244,
+      "shift": 12.435,
+      "swing_source": "combined",
+      "components": {
+        "national": 12.594,
+        "state_poll": 12.118,
+        "market": null,
+        "market_weight": 0.0,
+        "state_swing": 12.435,
+        "turnout": -0.798,
+        "early_vote": 0.0
+      },
+      "polls": {
+        "n": 4,
+        "avg_margin": -18.764,
+        "n_eff": 4.0
+      },
+      "p_dside_win": 0.0004,
+      "interval80": [
+        -25.049,
+        -13.384
+      ],
+      "name": "Alabama",
+      "ev_detail": "none",
+      "ei_status": "fallback",
+      "county_method": "uniform"
+    },
+    {
+      "state": "AK",
+      "class": 2,
+      "special": false,
+      "incumbent": "Sullivan",
+      "incumbent_party": "R",
+      "dside": {
+        "name": "Mary Peltola",
+        "party": "D",
+        "endorsed_by_dem": false
+      },
+      "rside": {
+        "name": "Dan Sullivan",
+        "party": "R"
+      },
+      "rcv": true,
+      "pres2024_margin": -13.693,
+      "proj_margin": -0.066,
+      "shift": 13.627,
+      "swing_source": "combined",
+      "components": {
+        "national": 12.594,
+        "state_poll": 15.693,
+        "market": null,
+        "market_weight": 0.0,
+        "state_swing": 13.627,
+        "turnout": 0.0,
+        "early_vote": 0.0
+      },
+      "polls": {
+        "n": 16,
+        "avg_margin": 2.0,
+        "n_eff": 8.392
+      },
+      "p_dside_win": 0.4956,
+      "interval80": [
+        -5.112,
+        5.057
+      ],
+      "name": "Alaska",
+      "ev_detail": "none",
+      "county_method": "none"
+    },
+    {
+      "state": "AR",
+      "class": 2,
+      "special": false,
+      "incumbent": "Cotton",
+      "incumbent_party": "R",
+      "dside": {
+        "name": "Hallie Shoffner",
+        "party": "D",
+        "endorsed_by_dem": false
+      },
+      "rside": {
+        "name": "Tom Cotton",
+        "party": "R"
+      },
+      "rcv": false,
+      "pres2024_margin": -31.34,
+      "proj_margin": -16.778,
+      "shift": 15.134,
+      "swing_source": "combined",
+      "components": {
+        "national": 12.594,
+        "state_poll": 20.215,
+        "market": null,
+        "market_weight": 0.0,
+        "state_swing": 15.134,
+        "turnout": -0.573,
+        "early_vote": 0.0
+      },
+      "polls": {
+        "n": 2,
+        "avg_margin": -11.125,
+        "n_eff": 2.0
+      },
+      "p_dside_win": 0.0029,
+      "interval80": [
+        -23.126,
+        -10.474
+      ],
+      "name": "Arkansas",
+      "ev_detail": "none",
+      "ei_status": "fallback",
+      "county_method": "uniform"
+    },
+    {
+      "state": "CO",
+      "class": 2,
+      "special": false,
+      "incumbent": "Hickenlooper",
+      "incumbent_party": "D",
+      "dside": {
+        "name": "John Hickenlooper",
+        "party": "D",
+        "endorsed_by_dem": false
+      },
+      "rside": {
+        "name": "Mark Baisley",
+        "party": "R"
+      },
+      "rcv": false,
+      "pres2024_margin": 11.293,
+      "proj_margin": 22.843,
+      "shift": 11.628,
+      "swing_source": "combined",
+      "components": {
+        "national": 12.594,
+        "state_poll": 9.695,
+        "market": null,
+        "market_weight": 0.0,
+        "state_swing": 11.628,
+        "turnout": -0.078,
+        "early_vote": 0.0
+      },
+      "polls": {
+        "n": 3,
+        "avg_margin": 20.988,
+        "n_eff": 2.315
+      },
+      "p_dside_win": 0.9996,
+      "interval80": [
+        16.461,
+        29.195
+      ],
+      "name": "Colorado",
+      "ev_detail": "none",
+      "ei_status": "fallback",
+      "county_method": "uniform"
+    },
+    {
+      "state": "DE",
+      "class": 2,
+      "special": false,
+      "incumbent": "Coons",
+      "incumbent_party": "D",
+      "dside": {
+        "name": "Chris Coons",
+        "party": "D",
+        "endorsed_by_dem": false
+      },
+      "rside": {
+        "name": "Michael Katz",
+        "party": "R"
+      },
+      "rcv": false,
+      "pres2024_margin": 14.958,
+      "proj_margin": 27.254,
+      "shift": 12.594,
+      "swing_source": "national_fallback",
+      "components": {
+        "national": 12.594,
+        "state_poll": null,
+        "market": null,
+        "market_weight": 0.0,
+        "state_swing": 12.594,
+        "turnout": -0.298,
+        "early_vote": 0.0
+      },
+      "polls": {
+        "n": 0,
+        "avg_margin": null,
+        "n_eff": 0.0
+      },
+      "p_dside_win": 1.0,
+      "interval80": [
+        21.202,
+        33.188
+      ],
+      "name": "Delaware",
+      "ev_detail": "none",
+      "ei_status": "fallback",
+      "county_method": "uniform"
+    },
+    {
+      "state": "FL",
+      "class": 3,
+      "special": true,
+      "incumbent": "Moody",
+      "incumbent_party": "R",
+      "dside": {
+        "name": "Angie Nixon",
+        "party": "D",
+        "endorsed_by_dem": false
+      },
+      "rside": {
+        "name": "Ashley Moody",
+        "party": "R"
+      },
+      "rcv": false,
+      "pres2024_margin": -13.222,
+      "proj_margin": -3.141,
+      "shift": 10.598,
+      "swing_source": "combined",
+      "components": {
+        "national": 12.594,
+        "state_poll": 6.607,
+        "market": null,
+        "market_weight": 0.0,
+        "state_swing": 10.598,
+        "turnout": -0.518,
+        "early_vote": 0.0
+      },
+      "polls": {
+        "n": 27,
+        "avg_margin": -6.615,
+        "n_eff": 19.192
+      },
+      "p_dside_win": 0.229,
+      "interval80": [
+        -8.751,
+        2.429
+      ],
+      "name": "Florida",
+      "ev_detail": "none",
+      "ei_status": "fallback",
+      "county_method": "uniform"
+    },
+    {
+      "state": "GA",
+      "class": 2,
+      "special": false,
+      "incumbent": "Ossoff",
+      "incumbent_party": "D",
+      "dside": {
+        "name": "Jon Ossoff",
+        "party": "D",
+        "endorsed_by_dem": false
+      },
+      "rside": {
+        "name": "Mike Collins",
+        "party": "R"
+      },
+      "rcv": false,
+      "pres2024_margin": -2.209,
+      "proj_margin": 8.899,
+      "shift": 12.404,
+      "swing_source": "combined",
+      "components": {
+        "national": 12.594,
+        "state_poll": 12.025,
+        "market": null,
+        "market_weight": 0.0,
+        "state_swing": 12.404,
+        "turnout": -1.297,
+        "early_vote": 0.0
+      },
+      "polls": {
+        "n": 13,
+        "avg_margin": 9.816,
+        "n_eff": 6.699
+      },
+      "p_dside_win": 0.9737,
+      "interval80": [
+        3.243,
+        14.462
+      ],
+      "name": "Georgia",
+      "ev_detail": "none",
+      "ei_status": "fallback",
+      "county_method": "uniform"
+    },
+    {
+      "state": "ID",
+      "class": 2,
+      "special": false,
+      "incumbent": "Risch",
+      "incumbent_party": "R",
+      "dside": {
+        "name": "Todd Achilles",
+        "party": "I",
+        "endorsed_by_dem": true
+      },
+      "rside": {
+        "name": "Jim Risch",
+        "party": "R"
+      },
+      "rcv": false,
+      "pres2024_margin": -37.522,
+      "proj_margin": -20.14,
+      "shift": 17.351,
+      "swing_source": "combined",
+      "components": {
+        "national": 12.594,
+        "state_poll": 26.866,
+        "market": null,
+        "market_weight": 0.0,
+        "state_swing": 17.351,
+        "turnout": 0.03,
+        "early_vote": 0.0
+      },
+      "polls": {
+        "n": 3,
+        "avg_margin": -10.656,
+        "n_eff": 2.664
+      },
+      "p_dside_win": 0.0006,
+      "interval80": [
+        -26.389,
+        -13.935
+      ],
+      "name": "Idaho",
+      "ev_detail": "none",
+      "ei_status": "fallback",
+      "county_method": "uniform"
+    },
+    {
+      "state": "IL",
+      "class": 2,
+      "special": false,
+      "incumbent": "Durbin",
+      "incumbent_party": "D",
+      "dside": {
+        "name": "Juliana Stratton",
+        "party": "D",
+        "endorsed_by_dem": false
+      },
+      "rside": {
+        "name": "Don Tracy",
+        "party": "R"
+      },
+      "rcv": false,
+      "pres2024_margin": 11.136,
+      "proj_margin": 19.283,
+      "shift": 9.19,
+      "swing_source": "combined",
+      "components": {
+        "national": 12.594,
+        "state_poll": 2.382,
+        "market": null,
+        "market_weight": 0.0,
+        "state_swing": 9.19,
+        "turnout": -1.042,
+        "early_vote": 0.0
+      },
+      "polls": {
+        "n": 4,
+        "avg_margin": 13.517,
+        "n_eff": 3.047
+      },
+      "p_dside_win": 0.9989,
+      "interval80": [
+        13.175,
+        25.455
+      ],
+      "name": "Illinois",
+      "ev_detail": "none",
+      "ei_status": "fallback",
+      "county_method": "uniform"
+    },
+    {
+      "state": "IA",
+      "class": 2,
+      "special": false,
+      "incumbent": "Ernst",
+      "incumbent_party": "R",
+      "dside": {
+        "name": "Josh Turek",
+        "party": "D",
+        "endorsed_by_dem": false
+      },
+      "rside": {
+        "name": "Ashley Hinson",
+        "party": "R"
+      },
+      "rcv": false,
+      "pres2024_margin": -13.471,
+      "proj_margin": -0.604,
+      "shift": 13.028,
+      "swing_source": "combined",
+      "components": {
+        "national": 12.594,
+        "state_poll": 13.895,
+        "market": null,
+        "market_weight": 0.0,
+        "state_swing": 13.028,
+        "turnout": -0.161,
+        "early_vote": 0.0
+      },
+      "polls": {
+        "n": 28,
+        "avg_margin": 0.425,
+        "n_eff": 13.635
+      },
+      "p_dside_win": 0.442,
+      "interval80": [
+        -5.585,
+        4.446
+      ],
+      "name": "Iowa",
+      "ev_detail": "none",
+      "ei_status": "fallback",
+      "county_method": "uniform"
+    },
+    {
+      "state": "KS",
+      "class": 2,
+      "special": false,
+      "incumbent": "Marshall",
+      "incumbent_party": "R",
+      "dside": {
+        "name": "Adam Hamilton",
+        "party": "D",
+        "endorsed_by_dem": false
+      },
+      "rside": {
+        "name": "Roger Marshall",
+        "party": "R"
+      },
+      "rcv": false,
+      "pres2024_margin": -16.411,
+      "proj_margin": -1.711,
+      "shift": 14.937,
+      "swing_source": "combined",
+      "components": {
+        "national": 12.594,
+        "state_poll": 19.623,
+        "market": null,
+        "market_weight": 0.0,
+        "state_swing": 14.937,
+        "turnout": -0.237,
+        "early_vote": 0.0
+      },
+      "polls": {
+        "n": 17,
+        "avg_margin": 3.211,
+        "n_eff": 9.809
+      },
+      "p_dside_win": 0.3452,
+      "interval80": [
+        -7.35,
+        4.025
+      ],
+      "name": "Kansas",
+      "ev_detail": "none",
+      "ei_status": "fallback",
+      "county_method": "uniform"
+    },
+    {
+      "state": "KY",
+      "class": 2,
+      "special": false,
+      "incumbent": "McConnell",
+      "incumbent_party": "R",
+      "dside": {
+        "name": "Charles Booker",
+        "party": "D",
+        "endorsed_by_dem": false
+      },
+      "rside": {
+        "name": "Andy Barr",
+        "party": "R"
+      },
+      "rcv": false,
+      "pres2024_margin": -31.028,
+      "proj_margin": -18.875,
+      "shift": 12.594,
+      "swing_source": "national_fallback",
+      "components": {
+        "national": 12.594,
+        "state_poll": null,
+        "market": null,
+        "market_weight": 0.0,
+        "state_swing": 12.594,
+        "turnout": -0.441,
+        "early_vote": 0.0
+      },
+      "polls": {
+        "n": 0,
+        "avg_margin": null,
+        "n_eff": 0.0
+      },
+      "p_dside_win": 0.0008,
+      "interval80": [
+        -24.891,
+        -12.842
+      ],
+      "name": "Kentucky",
+      "ev_detail": "none",
+      "ei_status": "fallback",
+      "county_method": "uniform"
+    },
+    {
+      "state": "LA",
+      "class": 2,
+      "special": false,
+      "incumbent": "Cassidy",
+      "incumbent_party": "R",
+      "dside": {
+        "name": "Jamie Davis",
+        "party": "D",
+        "endorsed_by_dem": false
+      },
+      "rside": {
+        "name": "Julia Letlow",
+        "party": "R"
+      },
+      "rcv": false,
+      "pres2024_margin": -22.706,
+      "proj_margin": -7.638,
+      "shift": 15.877,
+      "swing_source": "combined",
+      "components": {
+        "national": 12.594,
+        "state_poll": 22.443,
+        "market": null,
+        "market_weight": 0.0,
+        "state_swing": 15.877,
+        "turnout": -0.809,
+        "early_vote": 0.0
+      },
+      "polls": {
+        "n": 3,
+        "avg_margin": -0.263,
+        "n_eff": 2.238
+      },
+      "p_dside_win": 0.0497,
+      "interval80": [
+        -13.437,
+        -1.905
+      ],
+      "name": "Louisiana",
+      "ev_detail": "none",
+      "ei_status": "fallback",
+      "county_method": "uniform"
+    },
+    {
+      "state": "ME",
+      "class": 2,
+      "special": false,
+      "incumbent": "Collins",
+      "incumbent_party": "R",
+      "dside": {
+        "name": "Troy Jackson",
+        "party": "D",
+        "endorsed_by_dem": false
+      },
+      "rside": {
+        "name": "Susan Collins",
+        "party": "R"
+      },
+      "rcv": true,
+      "pres2024_margin": 6.608,
+      "proj_margin": 13.876,
+      "shift": 7.292,
+      "swing_source": "combined",
+      "components": {
+        "national": 12.594,
+        "state_poll": -3.311,
+        "market": null,
+        "market_weight": 0.0,
+        "state_swing": 7.292,
+        "turnout": -0.025,
+        "early_vote": 0.0
+      },
+      "polls": {
+        "n": 31,
+        "avg_margin": 3.297,
+        "n_eff": 15.985
+      },
+      "p_dside_win": 0.9974,
+      "interval80": [
+        8.843,
+        18.858
+      ],
+      "name": "Maine",
+      "ev_detail": "none",
+      "ei_status": "fallback",
+      "county_method": "uniform"
+    },
+    {
+      "state": "MA",
+      "class": 2,
+      "special": false,
+      "incumbent": "Markey",
+      "incumbent_party": "D",
+      "dside": {
+        "name": "Ed Markey",
+        "party": "D",
+        "endorsed_by_dem": false
+      },
+      "rside": {
+        "name": "John Deaton",
+        "party": "R"
+      },
+      "rcv": false,
+      "pres2024_margin": 25.911,
+      "proj_margin": 35.529,
+      "shift": 9.738,
+      "swing_source": "combined",
+      "components": {
+        "national": 12.594,
+        "state_poll": 4.027,
+        "market": null,
+        "market_weight": 0.0,
+        "state_swing": 9.738,
+        "turnout": -0.121,
+        "early_vote": 0.0
+      },
+      "polls": {
+        "n": 6,
+        "avg_margin": 29.938,
+        "n_eff": 4.794
+      },
+      "p_dside_win": 1.0,
+      "interval80": [
+        30.281,
+        40.852
+      ],
+      "name": "Massachusetts",
+      "ev_detail": "none",
+      "ei_status": "fallback",
+      "county_method": "uniform"
+    },
+    {
+      "state": "MI",
+      "class": 2,
+      "special": false,
+      "incumbent": "Peters",
+      "incumbent_party": "D",
+      "dside": {
+        "name": "Abdul El-Sayed",
+        "party": "D",
+        "endorsed_by_dem": false
+      },
+      "rside": {
+        "name": "Mike Rogers",
+        "party": "R"
+      },
+      "rcv": false,
+      "pres2024_margin": -1.442,
+      "proj_margin": 8.621,
+      "shift": 10.5,
+      "swing_source": "combined",
+      "components": {
+        "national": 12.594,
+        "state_poll": 6.312,
+        "market": null,
+        "market_weight": 0.0,
+        "state_swing": 10.5,
+        "turnout": -0.437,
+        "early_vote": 0.0
+      },
+      "polls": {
+        "n": 42,
+        "avg_margin": 4.87,
+        "n_eff": 19.949
+      },
+      "p_dside_win": 0.968,
+      "interval80": [
+        3.021,
+        14.233
+      ],
+      "name": "Michigan",
+      "ev_detail": "none",
+      "ei_status": "fallback",
+      "county_method": "uniform"
+    },
+    {
+      "state": "MN",
+      "class": 2,
+      "special": false,
+      "incumbent": "Smith",
+      "incumbent_party": "D",
+      "dside": {
+        "name": "Peggy Flanagan",
+        "party": "D",
+        "endorsed_by_dem": false
+      },
+      "rside": {
+        "name": "Michele Tafoya",
+        "party": "R"
+      },
+      "rcv": false,
+      "pres2024_margin": 4.343,
+      "proj_margin": 12.56,
+      "shift": 8.613,
+      "swing_source": "combined",
+      "components": {
+        "national": 12.594,
+        "state_poll": 0.652,
+        "market": null,
+        "market_weight": 0.0,
+        "state_swing": 8.613,
+        "turnout": -0.397,
+        "early_vote": 0.0
+      },
+      "polls": {
+        "n": 19,
+        "avg_margin": 4.995,
+        "n_eff": 10.797
+      },
+      "p_dside_win": 0.9937,
+      "interval80": [
+        6.847,
+        18.238
+      ],
+      "name": "Minnesota",
+      "ev_detail": "none",
+      "ei_status": "fallback",
+      "county_method": "uniform"
+    },
+    {
+      "state": "MS",
+      "class": 2,
+      "special": false,
+      "incumbent": "Hyde-Smith",
+      "incumbent_party": "R",
+      "dside": {
+        "name": "Scott Colom",
+        "party": "D",
+        "endorsed_by_dem": false
+      },
+      "rside": {
+        "name": "Cindy Hyde-Smith",
+        "party": "R"
+      },
+      "rcv": false,
+      "pres2024_margin": -23.145,
+      "proj_margin": -9.533,
+      "shift": 14.559,
+      "swing_source": "combined",
+      "components": {
+        "national": 12.594,
+        "state_poll": 18.487,
+        "market": null,
+        "market_weight": 0.0,
+        "state_swing": 14.559,
+        "turnout": -0.946,
+        "early_vote": 0.0
+      },
+      "polls": {
+        "n": 1,
+        "avg_margin": -4.658,
+        "n_eff": 1.0
+      },
+      "p_dside_win": 0.0466,
+      "interval80": [
+        -16.683,
+        -2.44
+      ],
+      "name": "Mississippi",
+      "ev_detail": "none",
+      "ei_status": "ok",
+      "county_method": "uniform"
+    },
+    {
+      "state": "MT",
+      "class": 2,
+      "special": false,
+      "incumbent": "Daines",
+      "incumbent_party": "R",
+      "dside": {
+        "name": "Seth Bodnar",
+        "party": "I",
+        "endorsed_by_dem": true
+      },
+      "rside": {
+        "name": "Kurt Alme",
+        "party": "R"
+      },
+      "rcv": false,
+      "pres2024_margin": -20.578,
+      "proj_margin": -9.796,
+      "shift": 10.884,
+      "swing_source": "combined",
+      "components": {
+        "national": 12.594,
+        "state_poll": 7.465,
+        "market": null,
+        "market_weight": 0.0,
+        "state_swing": 10.884,
+        "turnout": -0.102,
+        "early_vote": 0.0
+      },
+      "polls": {
+        "n": 9,
+        "avg_margin": -13.113,
+        "n_eff": 6.51
+      },
+      "p_dside_win": 0.0204,
+      "interval80": [
+        -15.701,
+        -4.021
+      ],
+      "name": "Montana",
+      "ev_detail": "none",
+      "ei_status": "fallback",
+      "county_method": "uniform"
+    },
+    {
+      "state": "NE",
+      "class": 2,
+      "special": false,
+      "incumbent": "Ricketts",
+      "incumbent_party": "R",
+      "dside": {
+        "name": "Dan Osborn",
+        "party": "I",
+        "endorsed_by_dem": true
+      },
+      "rside": {
+        "name": "Pete Ricketts",
+        "party": "R"
+      },
+      "rcv": false,
+      "pres2024_margin": -20.841,
+      "proj_margin": -6.515,
+      "shift": 14.598,
+      "swing_source": "combined",
+      "components": {
+        "national": 12.594,
+        "state_poll": 18.606,
+        "market": null,
+        "market_weight": 0.0,
+        "state_swing": 14.598,
+        "turnout": -0.272,
+        "early_vote": 0.0
+      },
+      "polls": {
+        "n": 14,
+        "avg_margin": -2.235,
+        "n_eff": 8.808
+      },
+      "p_dside_win": 0.072,
+      "interval80": [
+        -12.19,
+        -0.823
+      ],
+      "name": "Nebraska",
+      "ev_detail": "none",
+      "ei_status": "fallback",
+      "county_method": "uniform"
+    },
+    {
+      "state": "NH",
+      "class": 2,
+      "special": false,
+      "incumbent": "Shaheen",
+      "incumbent_party": "D",
+      "dside": {
+        "name": "Chris Pappas",
+        "party": "D",
+        "endorsed_by_dem": false
+      },
+      "rside": {
+        "name": "John E. Sununu",
+        "party": "R"
+      },
+      "rcv": false,
+      "pres2024_margin": 2.821,
+      "proj_margin": 12.804,
+      "shift": 9.994,
+      "swing_source": "combined",
+      "components": {
+        "national": 12.594,
+        "state_poll": 4.795,
+        "market": null,
+        "market_weight": 0.0,
+        "state_swing": 9.994,
+        "turnout": -0.011,
+        "early_vote": 0.0
+      },
+      "polls": {
+        "n": 16,
+        "avg_margin": 7.616,
+        "n_eff": 8.083
+      },
+      "p_dside_win": 0.996,
+      "interval80": [
+        7.749,
+        17.951
+      ],
+      "name": "New Hampshire",
+      "ev_detail": "none",
+      "ei_status": "fallback",
+      "county_method": "uniform"
+    },
+    {
+      "state": "NJ",
+      "class": 2,
+      "special": false,
+      "incumbent": "Booker",
+      "incumbent_party": "D",
+      "dside": {
+        "name": "Cory Booker",
+        "party": "D",
+        "endorsed_by_dem": false
+      },
+      "rside": {
+        "name": "Justin Murphy",
+        "party": "R"
+      },
+      "rcv": false,
+      "pres2024_margin": 6.028,
+      "proj_margin": 18.009,
+      "shift": 12.594,
+      "swing_source": "national_fallback",
+      "components": {
+        "national": 12.594,
+        "state_poll": null,
+        "market": null,
+        "market_weight": 0.0,
+        "state_swing": 12.594,
+        "turnout": -0.613,
+        "early_vote": 0.0
+      },
+      "polls": {
+        "n": 0,
+        "avg_margin": null,
+        "n_eff": 0.0
+      },
+      "p_dside_win": 0.9984,
+      "interval80": [
+        11.98,
+        24.027
+      ],
+      "name": "New Jersey",
+      "ev_detail": "none",
+      "ei_status": "fallback",
+      "county_method": "uniform"
+    },
+    {
+      "state": "NM",
+      "class": 2,
+      "special": false,
+      "incumbent": "Luj\u00e1n",
+      "incumbent_party": "D",
+      "dside": {
+        "name": "Ben Ray Luj\u00e1n",
+        "party": "D",
+        "endorsed_by_dem": false
+      },
+      "rside": {
+        "name": null,
+        "party": "R"
+      },
+      "rcv": false,
+      "pres2024_margin": 6.142,
+      "proj_margin": 18.613,
+      "shift": 12.594,
+      "swing_source": "national_fallback",
+      "components": {
+        "national": 12.594,
+        "state_poll": null,
+        "market": null,
+        "market_weight": 0.0,
+        "state_swing": 12.594,
+        "turnout": -0.123,
+        "early_vote": 0.0
+      },
+      "polls": {
+        "n": 0,
+        "avg_margin": null,
+        "n_eff": 0.0
+      },
+      "p_dside_win": 0.9992,
+      "interval80": [
+        12.675,
+        24.519
+      ],
+      "name": "New Mexico",
+      "ev_detail": "none",
+      "ei_status": "fallback",
+      "county_method": "uniform"
+    },
+    {
+      "state": "NC",
+      "class": 2,
+      "special": false,
+      "incumbent": "Tillis",
+      "incumbent_party": "R",
+      "dside": {
+        "name": "Roy Cooper",
+        "party": "D",
+        "endorsed_by_dem": false
+      },
+      "rside": {
+        "name": "Michael Whatley",
+        "party": "R"
+      },
+      "rcv": false,
+      "pres2024_margin": -3.261,
+      "proj_margin": 9.488,
+      "shift": 13.261,
+      "swing_source": "combined",
+      "components": {
+        "national": 12.594,
+        "state_poll": 14.594,
+        "market": null,
+        "market_weight": 0.0,
+        "state_swing": 13.261,
+        "turnout": -0.512,
+        "early_vote": 0.0
+      },
+      "polls": {
+        "n": 23,
+        "avg_margin": 11.333,
+        "n_eff": 9.846
+      },
+      "p_dside_win": 0.9794,
+      "interval80": [
+        3.832,
+        15.015
+      ],
+      "name": "North Carolina",
+      "ev_detail": "none",
+      "ei_status": "fallback",
+      "county_method": "uniform"
+    },
+    {
+      "state": "OH",
+      "class": 3,
+      "special": true,
+      "incumbent": "Husted",
+      "incumbent_party": "R",
+      "dside": {
+        "name": "Sherrod Brown",
+        "party": "D",
+        "endorsed_by_dem": false
+      },
+      "rside": {
+        "name": "Jon Husted",
+        "party": "R"
+      },
+      "rcv": false,
+      "pres2024_margin": -11.313,
+      "proj_margin": 1.267,
+      "shift": 13.121,
+      "swing_source": "combined",
+      "components": {
+        "national": 12.594,
+        "state_poll": 14.174,
+        "market": null,
+        "market_weight": 0.0,
+        "state_swing": 13.121,
+        "turnout": -0.54,
+        "early_vote": 0.0
+      },
+      "polls": {
+        "n": 35,
+        "avg_margin": 2.861,
+        "n_eff": 20.393
+      },
+      "p_dside_win": 0.6173,
+      "interval80": [
+        -4.401,
+        6.791
+      ],
+      "name": "Ohio",
+      "ev_detail": "none",
+      "ei_status": "fallback",
+      "county_method": "uniform"
+    },
+    {
+      "state": "OK",
+      "class": 2,
+      "special": false,
+      "incumbent": "Armstrong",
+      "incumbent_party": "R",
+      "dside": {
+        "name": null,
+        "party": "D",
+        "endorsed_by_dem": false
+      },
+      "rside": {
+        "name": "Alan Armstrong",
+        "party": "R"
+      },
+      "rcv": false,
+      "pres2024_margin": -34.94,
+      "proj_margin": -22.525,
+      "shift": 12.594,
+      "swing_source": "national_fallback",
+      "components": {
+        "national": 12.594,
+        "state_poll": null,
+        "market": null,
+        "market_weight": 0.0,
+        "state_swing": 12.594,
+        "turnout": -0.179,
+        "early_vote": 0.0
+      },
+      "polls": {
+        "n": 0,
+        "avg_margin": null,
+        "n_eff": 0.0
+      },
+      "p_dside_win": 0.0003,
+      "interval80": [
+        -28.516,
+        -16.527
+      ],
+      "name": "Oklahoma",
+      "ev_detail": "none",
+      "ei_status": "fallback",
+      "county_method": "uniform"
+    },
+    {
+      "state": "OR",
+      "class": 2,
+      "special": false,
+      "incumbent": "Merkley",
+      "incumbent_party": "D",
+      "dside": {
+        "name": "Jeff Merkley",
+        "party": "D",
+        "endorsed_by_dem": false
+      },
+      "rside": {
+        "name": null,
+        "party": "R"
+      },
+      "rcv": false,
+      "pres2024_margin": 14.866,
+      "proj_margin": 27.218,
+      "shift": 12.594,
+      "swing_source": "national_fallback",
+      "components": {
+        "national": 12.594,
+        "state_poll": null,
+        "market": null,
+        "market_weight": 0.0,
+        "state_swing": 12.594,
+        "turnout": -0.242,
+        "early_vote": 0.0
+      },
+      "polls": {
+        "n": 0,
+        "avg_margin": null,
+        "n_eff": 0.0
+      },
+      "p_dside_win": 1.0,
+      "interval80": [
+        21.846,
+        32.549
+      ],
+      "name": "Oregon",
+      "ev_detail": "none",
+      "ei_status": "fallback",
+      "county_method": "uniform"
+    },
+    {
+      "state": "RI",
+      "class": 2,
+      "special": false,
+      "incumbent": "Reed",
+      "incumbent_party": "D",
+      "dside": {
+        "name": "Jack Reed",
+        "party": "D",
+        "endorsed_by_dem": false
+      },
+      "rside": {
+        "name": null,
+        "party": "R"
+      },
+      "rcv": false,
+      "pres2024_margin": 13.946,
+      "proj_margin": 26.534,
+      "shift": 12.594,
+      "swing_source": "national_fallback",
+      "components": {
+        "national": 12.594,
+        "state_poll": null,
+        "market": null,
+        "market_weight": 0.0,
+        "state_swing": 12.594,
+        "turnout": -0.007,
+        "early_vote": 0.0
+      },
+      "polls": {
+        "n": 0,
+        "avg_margin": null,
+        "n_eff": 0.0
+      },
+      "p_dside_win": 1.0,
+      "interval80": [
+        21.04,
+        31.91
+      ],
+      "name": "Rhode Island",
+      "ev_detail": "none",
+      "ei_status": "fallback",
+      "county_method": "uniform"
+    },
+    {
+      "state": "SC",
+      "class": 2,
+      "special": false,
+      "incumbent": "Lindsey Graham",
+      "incumbent_party": "R",
+      "dside": {
+        "name": null,
+        "party": "D",
+        "endorsed_by_dem": false
+      },
+      "rside": {
+        "name": null,
+        "party": "R"
+      },
+      "rcv": false,
+      "pres2024_margin": -18.123,
+      "proj_margin": -5.925,
+      "shift": 12.594,
+      "swing_source": "national_fallback",
+      "components": {
+        "national": 12.594,
+        "state_poll": null,
+        "market": null,
+        "market_weight": 0.0,
+        "state_swing": 12.594,
+        "turnout": -0.396,
+        "early_vote": 0.0
+      },
+      "polls": {
+        "n": 0,
+        "avg_margin": null,
+        "n_eff": 0.0
+      },
+      "p_dside_win": 0.0997,
+      "interval80": [
+        -11.818,
+        -0.01
+      ],
+      "name": "South Carolina",
+      "ev_detail": "none",
+      "ei_status": "fallback",
+      "county_method": "uniform"
+    },
+    {
+      "state": "SD",
+      "class": 2,
+      "special": false,
+      "incumbent": "Rounds",
+      "incumbent_party": "R",
+      "dside": {
+        "name": null,
+        "party": "I",
+        "endorsed_by_dem": true
+      },
+      "rside": {
+        "name": "Mike Rounds",
+        "party": "R"
+      },
+      "rcv": false,
+      "pres2024_margin": -29.89,
+      "proj_margin": -17.605,
+      "shift": 12.594,
+      "swing_source": "national_fallback",
+      "components": {
+        "national": 12.594,
+        "state_poll": null,
+        "market": null,
+        "market_weight": 0.0,
+        "state_swing": 12.594,
+        "turnout": -0.309,
+        "early_vote": 0.0
+      },
+      "polls": {
+        "n": 0,
+        "avg_margin": null,
+        "n_eff": 0.0
+      },
+      "p_dside_win": 0.0013,
+      "interval80": [
+        -23.642,
+        -11.565
+      ],
+      "name": "South Dakota",
+      "ev_detail": "none",
+      "ei_status": "fallback",
+      "county_method": "uniform"
+    },
+    {
+      "state": "TN",
+      "class": 2,
+      "special": false,
+      "incumbent": "Hagerty",
+      "incumbent_party": "R",
+      "dside": {
+        "name": null,
+        "party": "D",
+        "endorsed_by_dem": false
+      },
+      "rside": {
+        "name": "Bill Hagerty",
+        "party": "R"
+      },
+      "rcv": false,
+      "pres2024_margin": -30.121,
+      "proj_margin": -18.374,
+      "shift": 12.594,
+      "swing_source": "national_fallback",
+      "components": {
+        "national": 12.594,
+        "state_poll": null,
+        "market": null,
+        "market_weight": 0.0,
+        "state_swing": 12.594,
+        "turnout": -0.847,
+        "early_vote": 0.0
+      },
+      "polls": {
+        "n": 0,
+        "avg_margin": null,
+        "n_eff": 0.0
+      },
+      "p_dside_win": 0.0007,
+      "interval80": [
+        -24.337,
+        -12.396
+      ],
+      "name": "Tennessee",
+      "ev_detail": "none",
+      "ei_status": "fallback",
+      "county_method": "uniform"
+    },
+    {
+      "state": "TX",
+      "class": 2,
+      "special": false,
+      "incumbent": "Cornyn",
+      "incumbent_party": "R",
+      "dside": {
+        "name": "James Talarico",
+        "party": "D",
+        "endorsed_by_dem": false
+      },
+      "rside": {
+        "name": "Ken Paxton",
+        "party": "R"
+      },
+      "rcv": false,
+      "pres2024_margin": -13.628,
+      "proj_margin": -0.565,
+      "shift": 14.017,
+      "swing_source": "combined",
+      "components": {
+        "national": 12.594,
+        "state_poll": 16.863,
+        "market": null,
+        "market_weight": 0.0,
+        "state_swing": 14.017,
+        "turnout": -0.954,
+        "early_vote": 0.0
+      },
+      "polls": {
+        "n": 52,
+        "avg_margin": 3.235,
+        "n_eff": 29.824
+      },
+      "p_dside_win": 0.4335,
+      "interval80": [
+        -5.528,
+        4.332
+      ],
+      "name": "Texas",
+      "ev_detail": "none",
+      "ei_status": "fallback",
+      "county_method": "uniform"
+    },
+    {
+      "state": "VA",
+      "class": 2,
+      "special": false,
+      "incumbent": "Warner",
+      "incumbent_party": "D",
+      "dside": {
+        "name": "Mark Warner",
+        "party": "D",
+        "endorsed_by_dem": false
+      },
+      "rside": {
+        "name": null,
+        "party": "R"
+      },
+      "rcv": false,
+      "pres2024_margin": 5.902,
+      "proj_margin": 17.704,
+      "shift": 12.594,
+      "swing_source": "national_fallback",
+      "components": {
+        "national": 12.594,
+        "state_poll": null,
+        "market": null,
+        "market_weight": 0.0,
+        "state_swing": 12.594,
+        "turnout": -0.792,
+        "early_vote": 0.0
+      },
+      "polls": {
+        "n": 0,
+        "avg_margin": null,
+        "n_eff": 0.0
+      },
+      "p_dside_win": 0.9987,
+      "interval80": [
+        11.865,
+        23.74
+      ],
+      "name": "Virginia",
+      "ev_detail": "none",
+      "ei_status": "fallback",
+      "county_method": "uniform"
+    },
+    {
+      "state": "WV",
+      "class": 2,
+      "special": false,
+      "incumbent": "Capito",
+      "incumbent_party": "R",
+      "dside": {
+        "name": null,
+        "party": "D",
+        "endorsed_by_dem": false
+      },
+      "rside": {
+        "name": "Shelley Moore Capito",
+        "party": "R"
+      },
+      "rcv": false,
+      "pres2024_margin": -42.688,
+      "proj_margin": -30.177,
+      "shift": 12.594,
+      "swing_source": "national_fallback",
+      "components": {
+        "national": 12.594,
+        "state_poll": null,
+        "market": null,
+        "market_weight": 0.0,
+        "state_swing": 12.594,
+        "turnout": -0.083,
+        "early_vote": 0.0
+      },
+      "polls": {
+        "n": 0,
+        "avg_margin": null,
+        "n_eff": 0.0
+      },
+      "p_dside_win": 0.0001,
+      "interval80": [
+        -36.227,
+        -24.113
+      ],
+      "name": "West Virginia",
+      "ev_detail": "none",
+      "ei_status": "fallback",
+      "county_method": "uniform"
+    },
+    {
+      "state": "WY",
+      "class": 2,
+      "special": false,
+      "incumbent": "Lummis",
+      "incumbent_party": "R",
+      "dside": {
+        "name": null,
+        "party": "D",
+        "endorsed_by_dem": false
+      },
+      "rside": {
+        "name": null,
+        "party": "R"
+      },
+      "rcv": false,
+      "pres2024_margin": -46.958,
+      "proj_margin": -34.442,
+      "shift": 12.594,
+      "swing_source": "national_fallback",
+      "components": {
+        "national": 12.594,
+        "state_poll": null,
+        "market": null,
+        "market_weight": 0.0,
+        "state_swing": 12.594,
+        "turnout": -0.078,
+        "early_vote": 0.0
+      },
+      "polls": {
+        "n": 0,
+        "avg_margin": null,
+        "n_eff": 0.0
+      },
+      "p_dside_win": 0.0001,
+      "interval80": [
+        -40.463,
+        -28.497
+      ],
+      "name": "Wyoming",
+      "ev_detail": "none",
+      "ei_status": "fallback",
+      "county_method": "uniform"
+    }
+  ],
+  "simulation": {
+    "n_draws": 20000,
+    "interval": [
+      0.1,
+      0.9
+    ],
+    "seats": {
+      "h_d": 34,
+      "pmf": {
+        "35": 5e-05,
+        "43": 0.00025,
+        "44": 0.0006,
+        "45": 0.0009,
+        "46": 0.0023,
+        "47": 0.00495,
+        "48": 0.02175,
+        "49": 0.1266,
+        "50": 0.15645,
+        "51": 0.1745,
+        "52": 0.1655,
+        "53": 0.1346,
+        "54": 0.09565,
+        "55": 0.06015,
+        "56": 0.03245,
+        "57": 0.01415,
+        "58": 0.00505,
+        "59": 0.00285,
+        "60": 0.00095,
+        "61": 0.0001,
+        "62": 0.00015,
+        "69": 5e-05
+      },
+      "mean": 51.76105,
+      "median": 52.0,
+      "interval80": [
+        49.0,
+        55.0
+      ],
+      "p_control": 0.68615,
+      "threshold": 51.0
+    },
+    "tipping": {
+      "AL": 5e-05,
+      "AK": 0.18245,
+      "AR": 0.0004,
+      "CO": 0.0003,
+      "FL": 0.06515,
+      "GA": 0.01885,
+      "IL": 0.0005,
+      "IA": 0.16515,
+      "KS": 0.1204,
+      "KY": 0.0001,
+      "LA": 0.0094,
+      "ME": 0.0014,
+      "MI": 0.0175,
+      "MN": 0.0032,
+      "MS": 0.00885,
+      "MT": 0.00275,
+      "NE": 0.0109,
+      "NH": 0.00315,
+      "NJ": 0.0006,
+      "NM": 0.0003,
+      "NC": 0.01545,
+      "OH": 0.1941,
+      "SC": 0.01815,
+      "SD": 0.00015,
+      "TN": 0.0001,
+      "TX": 0.1602,
+      "VA": 0.00045
+    }
+  },
+  "mock": false
+}
